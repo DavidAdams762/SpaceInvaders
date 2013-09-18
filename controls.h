@@ -9,8 +9,7 @@
 #define GK_DOWN   SDLK_DOWN
 #define GK_RIGHT  SDLK_RIGHT
 #define GK_LEFT   SDLK_LEFT
-#define GK_X      SDLK_a
-#define GK_Y      SDLK_z
+#define GK_Y      SDLK_SPACE
 #define GK_A      SDLK_s
 #define GK_B      SDLK_x
 
