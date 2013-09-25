@@ -8,7 +8,7 @@
 int main(int argc, char *argv[])
 {
   SDL_Surface *screen = NULL;
-  SDL_Surface *background[4];
+  SDL_Surface *background[2];
   SDL_Surface *ship = NULL;
   SDL_Surface *shipshoot = NULL;
   SDL_Surface *tmp = NULL;
