@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
   tmp = ship;
   shipshoot = IMG_Load("images/shipshoot.png");
   ennemy = IMG_Load("images/enemies.png");
-  int xTest = 20;
+  /*int xTest = 20;
   for (int i = 0; i <= 16; i++) {
     positionEnnemies[i].x = xTest;
     positionEnnemies[i].y = 0;
@@ -52,7 +52,7 @@ int main(int argc, char *argv[])
     }
     SDL_BlitSurface(ennemy, NULL, screen, &positionEnnemies[i]);
     xTest += 100;
-  }
+  }*/
   SDL_BlitSurface(ship, NULL, screen, &positionShip);
 
   SDL_Flip(screen);
@@ -102,7 +102,7 @@ int main(int argc, char *argv[])
                 }
                 break;
         }
-        xTest = 20;
+        /*xTest = 20;
         for (int i = 0; i <= 16; i++) {
             positionEnnemies[i].x = xTest;
             positionEnnemies[i].y = 0;
@@ -117,7 +117,7 @@ int main(int argc, char *argv[])
             }
             SDL_BlitSurface(ennemy, NULL, screen, &positionEnnemies[i]);
             xTest += 100;
-        }
+        }*/
         SDL_BlitSurface(ship, NULL, screen, &positionShip);
         ship = tmp;
         SDL_BlitSurface(shot, NULL, screen, &positionShip);
