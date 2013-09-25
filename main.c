@@ -7,19 +7,18 @@ void pause();
 int main(int argc, char *argv[])
 {
   SDL_Surface *screen = NULL;
+  SDL_Surface *background = NULL;
+  SDL_Rect positionBackground;
+
+  positionBackground.x = 0;
+  positionBackground.y = 0;
 
   SDL_Init(SDL_INIT_VIDEO);
 
   screen = SDL_SetVideoMode(800, 600, 32, SDL_HWSURFACE);
-  if (screen == NULL)
-    {
-      fprintf(stderr, "Impossible de charger le mode vidéo : %s\n", SDL_GetError());
-      exit(EXIT_FAILURE);
-    }
-
-  SDL_WM_SetCaption("Space Invaders", NULL);
-
-  SDL_FillRect(screen, NULL, SDL_MapRGB(screen->format, 0, 0, 0));
+  SDL_WM_SetCaption("Load images", NULL);
+  background = SDL_LoadBMP("images/background.bmp");
+  SDL_BlitSurface(background, NULL, screen, &positionBackground);
 
   SDL_Flip(screen);
 
