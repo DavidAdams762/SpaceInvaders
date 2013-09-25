@@ -8,8 +8,10 @@
 int main(int argc, char *argv[])
 {
   SDL_Surface *screen = NULL;
-  SDL_Surface *background = NULL;
+  SDL_Surface *background[4];
   SDL_Surface *ship = NULL;
+  SDL_Surface *shipshoot = NULL;
+  SDL_Surface *tmp = NULL;
   SDL_Surface *shot = NULL;
   SDL_Rect positionBackground;
   SDL_Rect positionShip;
@@ -26,10 +28,12 @@ int main(int argc, char *argv[])
 
   screen = SDL_SetVideoMode(800, 600, 32, SDL_HWSURFACE | SDL_DOUBLEBUF);
   SDL_WM_SetCaption("Load images", NULL);
-  background = SDL_LoadBMP("images/background.bmp");
-  SDL_BlitSurface(background, NULL, screen, &positionBackground);
+  background[0] = IMG_Load("images/bg-1.png");
+  background[1] = IMG_Load("images/bg-2.png");
 
   ship = IMG_Load("images/ship.png");
+  tmp = ship;
+  shipshoot = IMG_Load("images/shipshoot.png");
   SDL_BlitSurface(ship, NULL, screen, &positionShip);
 
   SDL_Flip(screen);
@@ -38,6 +42,10 @@ int main(int argc, char *argv[])
 
   while (continuer)
     {
+
+      Uint32 intervalBG = SDL_GetTicks();
+      SDL_BlitSurface(background[intervalBG%2], NULL, screen, &positionBackground);
+
       SDL_WaitEvent(&event);
       switch(event.type)
         {
@@ -63,6 +71,8 @@ int main(int argc, char *argv[])
                         }
                         break;
                     case SDLK_SPACE:
+                        tmp = ship;
+                        ship = shipshoot;
                         shot = IMG_Load("images/shot.png");
                         positionShot.x = positionShip.x;
                         positionShot.y = positionShip.y;
@@ -73,13 +83,13 @@ int main(int argc, char *argv[])
                 }
                 break;
         }
-        SDL_BlitSurface(background, NULL, screen, &positionBackground);
         SDL_BlitSurface(ship, NULL, screen, &positionShip);
+        ship = tmp;
         SDL_BlitSurface(shot, NULL, screen, &positionShip);
         SDL_Flip(screen);
     }
 
-  SDL_FreeSurface(background);
+  SDL_FreeSurface(*background);
   SDL_FreeSurface(ship);
   SDL_FreeSurface(shot);
   SDL_Quit();
