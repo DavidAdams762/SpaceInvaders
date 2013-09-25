@@ -10,7 +10,7 @@ int main(int argc, char *argv[])
 
   SDL_Init(SDL_INIT_VIDEO);
 
-  screen = SDL_SetVideoMode(640, 480, 32, SDL_HWSURFACE);
+  screen = SDL_SetVideoMode(800, 600, 32, SDL_HWSURFACE);
   if (screen == NULL)
     {
       fprintf(stderr, "Impossible de charger le mode vidéo : %s\n", SDL_GetError());
