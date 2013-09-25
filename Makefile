@@ -1,4 +1,4 @@
-TARGET=vaders
+TARGET=spaceinvaders
 
 CXX=clang
 CXXFLAGS=-Wno-unknown-pragmas
