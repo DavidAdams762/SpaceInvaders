@@ -13,11 +13,14 @@ int main(int argc, char *argv[])
   SDL_Surface *shipshoot = NULL;
   SDL_Surface *tmp = NULL;
   SDL_Surface *shot = NULL;
+  SDL_Surface *ennemy = NULL;
   SDL_Rect positionBackground;
   SDL_Rect positionShip;
   SDL_Rect positionShot;
   int continuer = 1;
   SDL_Event event;
+  SDL_Rect *positionEnnemies;
+
 
   positionBackground.x = 0;
   positionBackground.y = 0;
@@ -27,13 +30,29 @@ int main(int argc, char *argv[])
   SDL_Init(SDL_INIT_VIDEO);
 
   screen = SDL_SetVideoMode(800, 600, 32, SDL_HWSURFACE | SDL_DOUBLEBUF);
-  SDL_WM_SetCaption("Load images", NULL);
+
   background[0] = IMG_Load("images/bg-1.png");
   background[1] = IMG_Load("images/bg-2.png");
-
   ship = IMG_Load("images/ship.png");
   tmp = ship;
   shipshoot = IMG_Load("images/shipshoot.png");
+  ennemy = IMG_Load("images/enemies.png");
+  int xTest = 20;
+  for (int i = 0; i <= 16; i++) {
+    positionEnnemies[i].x = xTest;
+    positionEnnemies[i].y = 0;
+    if (i > 7 && positionEnnemies[i].x > 800) {
+      if (i == 8) {
+        positionEnnemies[i].x = 20;
+      }
+      else {
+        positionEnnemies[i].x = positionEnnemies[i-1].x + 100;
+      }
+      positionEnnemies[i].y += 100;
+    }
+    SDL_BlitSurface(ennemy, NULL, screen, &positionEnnemies[i]);
+    xTest += 100;
+  }
   SDL_BlitSurface(ship, NULL, screen, &positionShip);
 
   SDL_Flip(screen);
@@ -82,6 +101,22 @@ int main(int argc, char *argv[])
                         break;
                 }
                 break;
+        }
+        xTest = 20;
+        for (int i = 0; i <= 16; i++) {
+            positionEnnemies[i].x = xTest;
+            positionEnnemies[i].y = 0;
+            if (i > 7 && positionEnnemies[i].x > 800) {
+                if (i == 8) {
+                    positionEnnemies[i].x = 20;
+                }
+                else {
+                    positionEnnemies[i].x = positionEnnemies[i-1].x + 100;
+                }
+                positionEnnemies[i].y += 100;
+            }
+            SDL_BlitSurface(ennemy, NULL, screen, &positionEnnemies[i]);
+            xTest += 100;
         }
         SDL_BlitSurface(ship, NULL, screen, &positionShip);
         ship = tmp;
