@@ -49,10 +49,16 @@ int main(int argc, char *argv[])
                         continuer = 0;
                         break;
                     case SDLK_RIGHT:
-                        positionShip.x += 5;
+                        if (positionShip.x < 735)
+                        {
+                            positionShip.x += 5;
+                        }
                         break;
                     case SDLK_LEFT:
+                    if (positionShip.x > 0)
+                    {
                         positionShip.x -= 5;
+                    }
                         break;
                 }
                 break;
