@@ -6,20 +6,25 @@ CPPFLAGS=-g
 LDFLAGS=
 LDLIBS=-lSDL_image -lSDL_gfx
 
-SRCS=$(wildcard *.c)
-INCLUDES=$(wildcard *.h)
-OBJS=$(SRCS:%.c=%.o)
+SRC=$(wildcard *.c)
+INCLUDE=$(wildcard *.h)
+OBJ=$(SRC:%.c=%.o)
 
 all: $(TARGET)
 
-$(TARGET): $(OBJS)
-	$(CXX) $(LDFLAGS) -o $(TARGET) $(OBJS) $(LDLIBS) `sdl-config --cflags --libs`
+$(TARGET): $(OBJ)
+	$(CXX) $(LDFLAGS) -o $(TARGET) $(OBJ) $(LDLIBS) `sdl-config --cflags --libs`
 
-$(SRCS):
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $< -I$(INCLUDES)
+$(SRC):
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $< -I$(INCLUDE)
 
 clean:
 	rm -rf *.o $(TARGET)
 
 install:
 	sudo cp $(TARGET) /usr/bin/$(TARGET)
+
+fclean:		clean
+		$(RM) $(TARGET)
+
+re:		fclean all
