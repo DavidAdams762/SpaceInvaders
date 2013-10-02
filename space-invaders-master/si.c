@@ -273,12 +273,21 @@ void draw_hud() {
 	char lives_num[2];
 	snprintf(lives_num, 2, "%d", player.lives);
 	draw_string(lives_num, WIDTH, 140);
-	
-	char author[] = "David";
-	draw_string(author, WIDTH, 540);
-	
-	char name[] = "Kenny";
-	draw_string(name, WIDTH, 560);
+
+	char credits[] = "Made by";
+    draw_string(credits, WIDTH, 480);
+
+	char name1[] = "David";
+	draw_string(name1, WIDTH, 500);
+
+	char name2[] = "Eddy";
+    draw_string(name2, WIDTH, 520);
+
+	char name3[] = "Kenny";
+	draw_string(name3, WIDTH, 540);
+
+	char name4[] = "Ophelie";
+    draw_string(name4, WIDTH, 560);
 }
 
 //Draw the title screen
@@ -1108,7 +1117,7 @@ void player_shoot() {
 //Determine game level
 void calculate_level() {
 
-	if (invaders.killed != 0 && invaders.killed % 50 == 0) {
+	if (invaders.killed != 0 && invaders.killed % 40 == 0) {
 		
 		score.level++;
 		init_invaders();
@@ -1372,7 +1381,7 @@ int main() {
 				}
 			}
 			
-			draw_title_screen();	
+			draw_title_screen();
 			draw_string(s, (SCREEN_WIDTH / 2) - (strlen(s) * 10), 500);
 
 		} else if (state == game) {
