@@ -90,7 +90,7 @@ void interface(SDL_Surface *screen) {
 
   SDL_FreeSurface(*background);
   SDL_FreeSurface(ship);
-  SDL_FreeSurface(shot);
+  SDL_FreeSurface(shot);                     //
 
 
 }
