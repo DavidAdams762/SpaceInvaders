@@ -39,12 +39,12 @@ struct score_t {
 	unsigned int level;
 };
 
-struct saucer_t {
-	
-	SDL_Rect hitbox;
-	unsigned int alive;
-	enum direction_t direction;
-};
+//struct saucer_t {
+//
+//	SDL_Rect hitbox;
+//	unsigned int alive;
+//	enum direction_t direction;
+//};
 
 struct enemy_t {
 
@@ -88,14 +88,14 @@ static SDL_Surface *title_screen;
 static SDL_Surface *cmap;
 static SDL_Surface *invadersmap;
 static SDL_Surface *player_img;
-static SDL_Surface *saucer_img;
+//static SDL_Surface *saucer_img;
 //static SDL_Surface *base_img[4];
 static SDL_Surface *damage_img;
 static SDL_Surface *damage_top_img;
 static SDL_Surface *game_over_img;
 struct score_t score;
 struct invaders_t invaders;
-struct saucer_t saucer;
+//struct saucer_t saucer;
 //struct base_t base[BASE];
 struct player_t player;
 struct bullet_t bullets[P_BULLETS];
@@ -218,15 +218,15 @@ void init_bullets(struct bullet_t b[], int max) {
 }
 
 //Initialize the saucer position and dimensions
-void init_saucer() {
-
-	saucer.hitbox.x = 0;	
-	saucer.hitbox.y	= 0;
-	saucer.hitbox.w	= 30;
-	saucer.hitbox.h = 20;
-	saucer.alive = 0;
-	saucer.direction = right;
-}
+//void init_saucer() {
+//
+//	saucer.hitbox.x = 0;
+//	saucer.hitbox.y	= 0;
+//	saucer.hitbox.w	= 30;
+//	saucer.hitbox.h = 20;
+//	saucer.alive = 0;
+//	saucer.direction = right;
+//}
 
 //Draw the background
 void draw_background () {
@@ -301,20 +301,20 @@ void draw_title_screen() {
 }
 
 //Draw the saucer if its alive
-void draw_saucer() {
-
-	SDL_Rect src;
-	
-	src.x = 0;
-	src.y = 0;
-	src.w = 30;
-	src.h = 20;
-	
-	if (saucer.alive == 1) {
-		
-		SDL_BlitSurface(saucer_img, &src, screen, &saucer.hitbox);
-	}
-}
+//void draw_saucer() {
+//
+//	SDL_Rect src;
+//
+//	src.x = 0;
+//	src.y = 0;
+//	src.w = 30;
+//	src.h = 20;
+//
+//	if (saucer.alive == 1) {
+//
+//		SDL_BlitSurface(saucer_img, &src, screen, &saucer.hitbox);
+//	}
+//}
 
 //Draw the invaders if there alive
 void draw_invaders() {
@@ -685,35 +685,35 @@ void move_player(enum direction_t direction) {
 }
 
 //Move saucer based on there current direction
-void move_saucer() {
-
-	if (saucer.alive == 1) {
-
-		if (saucer.direction == left) {
-		
-			saucer.hitbox.x -= 5;
-
-			if (saucer.hitbox.x < 0) {
-				
-				saucer.alive = 0;
-				saucer.hitbox.x = 0;
-				saucer.direction = right;
-			}
-		}
-
-		if (saucer.direction == right) {
-		
-			saucer.hitbox.x += 5;
-
-			if (saucer.hitbox.x + saucer.hitbox.w > WIDTH) {
-			
-				saucer.alive = 0;
-				saucer.hitbox.x = WIDTH - saucer.hitbox.w;
-				saucer.direction = left;
-			}
-		}
-	}
-}
+//void move_saucer() {
+//
+//	if (saucer.alive == 1) {
+//
+//		if (saucer.direction == left) {
+//
+//			saucer.hitbox.x -= 5;
+//
+//			if (saucer.hitbox.x < 0) {
+//
+//				saucer.alive = 0;
+//				saucer.hitbox.x = 0;
+//				saucer.direction = right;
+//			}
+//		}
+//
+//		if (saucer.direction == right) {
+//
+//			saucer.hitbox.x += 5;
+//
+//			if (saucer.hitbox.x + saucer.hitbox.w > WIDTH) {
+//
+//				saucer.alive = 0;
+//				saucer.hitbox.x = WIDTH - saucer.hitbox.w;
+//				saucer.direction = left;
+//			}
+//		}
+//	}
+//}
 
 //Detect any collision between any two non rotated rectangles
 int collision(SDL_Rect a, SDL_Rect b) {
@@ -972,58 +972,58 @@ void player_hit_collision() {
 }
 
 //Look for collisions based on player bullet and saucer rectangles
-void saucer_hit_collision() {
-
-	int i,c;
-
-	if (saucer.alive == 1) {
-	
-		for(i = 0; i < P_BULLETS; i++) {
-	
-			if (bullets[i].alive == 1) {
-			
-				c = collision(bullets[i].hitbox, saucer.hitbox);
-	
-				if (c == 1) {
-				
-					int r = rand() % 3;
-					
-					switch (r) {
-			
-						case 0:
-							score.points += 50;
-							break;
-	
-						case 1:
-							score.points += 150;
-							break;
-	
-						case 2:
-							score.points += 300;
-							break;
-	
-						default:
-							break;
-					}
-					
-					//sucer was hit reset for next time
-					saucer.alive = 0;
-					
-					if (saucer.direction == left) {
-						
-						saucer.hitbox.x = 0; 
-						saucer.direction = right; 
-	
-					} else if (saucer.direction == right) {
-					
-						saucer.hitbox.x = WIDTH - saucer.hitbox.w; 
-						saucer.direction = left; 
-					}
-				}
-			}
-		}
-	}
-}
+//void saucer_hit_collision() {
+//
+//	int i,c;
+//
+//	if (saucer.alive == 1) {
+//
+//		for(i = 0; i < P_BULLETS; i++) {
+//
+//			if (bullets[i].alive == 1) {
+//
+//				c = collision(bullets[i].hitbox, saucer.hitbox);
+//
+//				if (c == 1) {
+//
+//					int r = rand() % 3;
+//
+//					switch (r) {
+//
+//						case 0:
+//							score.points += 50;
+//							break;
+//
+//						case 1:
+//							score.points += 150;
+//							break;
+//
+//						case 2:
+//							score.points += 300;
+//							break;
+//
+//						default:
+//							break;
+//					}
+//
+//					//sucer was hit reset for next time
+//					saucer.alive = 0;
+//
+//					if (saucer.direction == left) {
+//
+//						saucer.hitbox.x = 0;
+//						saucer.direction = right;
+//
+//					} else if (saucer.direction == right) {
+//
+//						saucer.hitbox.x = WIDTH - saucer.hitbox.w;
+//						saucer.direction = left;
+//					}
+//				}
+//			}
+//		}
+//	}
+//}
 
 //Look for collisions based on invader and player rectangles
 int enemy_player_collision() {
@@ -1113,20 +1113,20 @@ void calculate_level() {
 		score.level++;
 		init_invaders();
 //		init_bases();
-		init_saucer();
+//		init_saucer();
 		pause_for(500);
 	}
 }
 
 //Determine when saucer should appear
-void saucer_ai() {
-
-	//every 20 shots
-	if (score.shots != 0 && score.shots % 20 == 0) {
-	
-		saucer.alive = 1;
-	}
-}
+//void saucer_ai() {
+//
+//	//every 20 shots
+//	if (score.shots != 0 && score.shots % 20 == 0) {
+//
+//		saucer.alive = 1;
+//	}
+//}
 
 //Determine when invaders should shoot
 void enemy_ai() {
@@ -1262,7 +1262,7 @@ int main() {
 	load_image("cmap.bmp", &cmap, magenta);
 	load_image("invaders.bmp", &invadersmap, magenta);
 	load_image("player.bmp", &player_img, magenta);
-	load_image("saucer.bmp", &saucer_img, magenta);
+//	load_image("saucer.bmp", &saucer_img, magenta);
 	load_image("gameover.bmp", &game_over_img, magenta);
 	load_image("damage.bmp", &damage_img, lime);
 	load_image("damagetop.bmp", &damage_top_img, lime);
@@ -1277,7 +1277,7 @@ int main() {
 	init_invaders();
 //	init_bases();
 	init_player();
-	init_saucer();
+//	init_saucer();
 	init_bullets(bullets, P_BULLETS);
 	init_bullets(e_bullets, E_BULLETS);
 	state = menu;
@@ -1312,7 +1312,7 @@ int main() {
 							} else if (state == game){
 								
 								player_shoot();
-								saucer_ai();
+//								saucer_ai();
 							
 							} else if (state == game_over) {
 							
@@ -1392,18 +1392,18 @@ int main() {
 			draw_player();
 //			draw_bases();
 			draw_invaders();
-			draw_saucer();
+//			draw_saucer();
 			draw_bullets(bullets, P_BULLETS);
 			draw_bullets(e_bullets, E_BULLETS);
 			enemy_hit_collision();
 			player_hit_collision();
 //			enemy_base_collision();
-			saucer_hit_collision();
+//			saucer_hit_collision();
 //			bullet_base_collision(e_bullets, E_BULLETS, 1);
 //			bullet_base_collision(bullets, P_BULLETS, 0);
 			enemy_player_collision();
 			move_invaders(invaders.speed);
-			move_saucer();
+//			move_saucer();
 			move_bullets(bullets, P_BULLETS, -30);
 			move_bullets(e_bullets, E_BULLETS, 15);
 			calculate_level();
@@ -1417,7 +1417,7 @@ int main() {
 			draw_player();
 //			draw_bases();
 			draw_invaders();
-			draw_saucer();
+//			draw_saucer();
 			draw_bullets(bullets, P_BULLETS);
 			draw_bullets(e_bullets, E_BULLETS);
 			draw_game_over();
@@ -1428,7 +1428,7 @@ int main() {
 			draw_player();
 //			draw_bases();
 			draw_invaders();
-			draw_saucer();
+//			draw_saucer();
 			draw_bullets(bullets, P_BULLETS);
 			draw_bullets(e_bullets, E_BULLETS);
 			pause_game();
