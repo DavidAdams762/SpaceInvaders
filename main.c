@@ -18,6 +18,7 @@ void interface(SDL_Surface *screen) {
     SDL_Rect *positionEnnemies;
     int continuer = 1;
     SDL_Event event;
+    //Test
 
     positionBackground.x = 0;
     positionBackground.y = 0;
