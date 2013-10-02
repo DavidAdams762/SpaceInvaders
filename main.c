@@ -77,6 +77,7 @@ int main(int argc, char *argv[])
                     case SDLK_ESCAPE:
                         continuer = 0;
                         break;
+
                     case SDLK_RIGHT:
                         if (positionShip.x < 735)
                         {
@@ -98,6 +99,8 @@ int main(int argc, char *argv[])
                         while (positionShot.y < 800) {
                             positionShot.y += 5;
                         }
+                        break;
+                    default:
                         break;
                 }
                 break;
