@@ -3,28 +3,7 @@
 #include "SDL/SDL.h"
 #include "space.h"
 
-
-
-//global variables, for convenience.
-//SDL_Surface *screen;
-//SDL_Surface *title_screen;
-//SDL_Surface *cmap;
-//SDL_Surface *invadersmap;
-//SDL_Surface *player_img;
-//SDL_Surface *damage_img;
-//SDL_Surface *damage_top_img;
-//SDL_Surface *game_over_img;
-//struct invaders_t invaders;
-//
-//struct score_t score;
-//struct invaders_t invaders;
-//struct player_t player;
-//struct bullet_t bullets[P_BULLETS];
-//struct bullet_t e_bullets[E_BULLETS];
-//unsigned int pause_len;
-//Uint32 pause_time;
-//enum state_t state;
-//Uint32 title_time;
+int load_image(char filename[], SDL_Surface **surface, enum ck_t colour_key);
 
 //Initialize the score structure and game state
 void init_score(struct score_t score) {
@@ -70,6 +49,65 @@ void draw_background (SDL_Surface *screen) {
 	SDL_FillRect(screen, &src, 0);
 }
 
+//Draw a char
+int draw_char(char c, int x, int y, SDL_Surface *cmap, SDL_Surface *screen) {
+
+	SDL_Rect src;
+	SDL_Rect dest;
+	int i,j;
+	char *map[] = {"ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+			"abcdefghijklmnopqrstuvwxyz",
+			"!@#$%^&*()_+{}|:\"<>?,.;'-=",
+			"0123456789"};
+
+	src.x = 0;
+	src.y = 0;
+	src.w = 20;
+	src.h = 20;
+
+	dest.x = x;
+	dest.y = y;
+	dest.w = 20;
+	dest.h = 20;
+
+	for (i = 0; i < 4; i++) {
+
+		for(j = 0; j < strlen(map[i]); j++) {
+
+			if (c == map[i][j]) {
+
+				SDL_BlitSurface(cmap, &src, screen, &dest);
+				return 0;
+			}
+
+			src.x += 20;
+		}
+
+		src.y += 20;//move down one line on the image file
+		src.x = 0; //reset to start of line
+	}
+
+	return 0;
+}
+
+//Draw a string of chars
+void draw_string(char s[], int x, int y, SDL_Surface *cmap, SDL_Surface *screen) {
+
+	int i;
+
+	for (i = 0; i < strlen(s); i++) {
+
+		draw_char(s[i], x, y, cmap, screen);
+		x += 20;
+	}
+}
+
+//Set amount of time to pause game for
+void pause_for(unsigned int len, enum state_t state, Uint32 pause_time, unsigned int pause_len) {
+	state = pause;
+	pause_time = SDL_GetTicks();
+	pause_len = len;
+}
 //Draw the HUD
 void draw_hud(SDL_Surface *screen, struct score_t score, struct player_t player, SDL_Surface *cmap) {
 	
@@ -167,58 +205,7 @@ void draw_bullets(struct bullet_t b[], int max, SDL_Surface *screen) {
 	}
 }
 
-//Draw a char
-int draw_char(char c, int x, int y, SDL_Surface *cmap, SDL_Surface *screen) {
 
-	SDL_Rect src;
-	SDL_Rect dest;
-	int i,j;
-	char *map[] = {"ABCDEFGHIJKLMNOPQRSTUVWXYZ",
-			"abcdefghijklmnopqrstuvwxyz",
-			"!@#$%^&*()_+{}|:\"<>?,.;'-=",
-			"0123456789"};
-
-	src.x = 0;
-	src.y = 0;
-	src.w = 20;
-	src.h = 20;
-	
-	dest.x = x;
-	dest.y = y;
-	dest.w = 20;
-	dest.h = 20;
-
-	for (i = 0; i < 4; i++) {
-	
-		for(j = 0; j < strlen(map[i]); j++) {
-			
-			if (c == map[i][j]) {
-			
-				SDL_BlitSurface(cmap, &src, screen, &dest);
-				return 0;
-			}
-
-			src.x += 20;
-		}
-	
-		src.y += 20;//move down one line on the image file
-		src.x = 0; //reset to start of line
-	}
-
-	return 0;
-}
-
-//Draw a string of chars
-void draw_string(char s[], int x, int y, SDL_Surface *cmap, SDL_Surface *screen) {
-
-	int i;
-
-	for (i = 0; i < strlen(s); i++) {
-	
-		draw_char(s[i], x, y, cmap, screen);
-		x += 20;
-	}
-}
 
 //Draw Game Over message
 void draw_game_over(SDL_Surface *game_over_img, SDL_Surface *screen) {
@@ -706,12 +693,7 @@ void pause_game(Uint32 pause_time, unsigned int pause_len, enum state_t state) {
 	}
 }
 
-//Set amount of time to pause game for
-void pause_for(unsigned int len, enum state_t state, Uint32 pause_time, unsigned int pause_len) {
-	state = pause;
-	pause_time = SDL_GetTicks();
-	pause_len = len;
-}
+
 
 //Load image files
 int load_image(char filename[], SDL_Surface **surface, enum ck_t colour_key) {
@@ -751,10 +733,11 @@ int main() {
     SDL_Surface *cmap;
     SDL_Surface *invadersmap;
     SDL_Surface *player_img;
+    SDL_Surface *saucer_img;
+    SDL_Surface *base_img[4];
     SDL_Surface *damage_img;
     SDL_Surface *damage_top_img;
     SDL_Surface *game_over_img;
-
     struct score_t score;
     struct invaders_t invaders;
     struct player_t player;
@@ -816,40 +799,40 @@ int main() {
 		
 		/* Grab a snapshot of the keyboard. */
 		keystate = SDL_GetKeyState(NULL);
-		
+
 		while (SDL_PollEvent(&event)) {
 
 			switch(event.type) {
-				
+
 				case SDL_KEYDOWN:
-					
+
 					switch( event.key.keysym.sym ) {
-					
+
 						//exit out of game loop if escape is pressed
 						case SDLK_ESCAPE:
-							
+
 							quit = 1;
 						break;
-						
-						case SDLK_SPACE:	
-						
+
+						case SDLK_SPACE:
+
 							if (state == menu) {
 
 								state = game;
 
 							} else if (state == game){
-								
+
 								player_shoot(bullets, score, player);
 
 							} else if (state == game_over) {
-							
+
 								init_invaders(invaders);
 								init_score(score);
 								init_player(player);
 								state = game;
 							}
 						break;
-						
+
 						default:
 						break;
 					}
@@ -860,75 +843,44 @@ int main() {
 		draw_background(screen);
 
 		if (state == menu) {
-			
 			char s[] = "Press SPACEBAR to start";
-			SDL_Rect src[60];
-			
+			SDL_Rect src[1];
 			int i;
+            src[0].x = 180;
+            src[0].y = 40;
+            src[0].w = 440;
+            src[0].h = 230;
 
-			if (title_time + 2000 < SDL_GetTicks())  {
+            SDL_FillRect(screen, &src[0], 248);
 
-				src[0].x = 180;
-				src[0].y = 40;
-				src[0].w = 440;
-				src[0].h = 230;
-
-				SDL_FillRect(screen, &src[0], 248);
-
-			} else {
-
-				int y = 0;
-
-				for (i = 0; i < 60; i++) {
-				
-					src[i].x = 0;
-					src[i].y = y;
-					src[i].w = SCREEN_WIDTH;
-					src[i].h = 10;
-
-					SDL_FillRect(screen, &src[i], 227);
-				
-					y += 10;							
-				}
-			
-				for (i = 0; i < 60; i++) {
-
-					SDL_FillRect(screen, &src[i], rand() % 255);
-
-				}
-			}
-			
 			draw_title_screen(title_screen, screen);
 			draw_string(s, (SCREEN_WIDTH / 2) - (strlen(s) * 10), 500, cmap, screen);
 
 		} else if (state == game) {
-
-			//move player
 			if (keystate[SDLK_LEFT]) {
-				
+
 				move_player(left, player);
 			}
 
 			if (keystate[SDLK_RIGHT]) {
-				
+
 				move_player(right, player);
 			}
-
-			draw_hud(screen, score, player, cmap);
+//			draw_hud(screen, score, player, cmap);
 			draw_player(player_img, screen, player);
-			draw_invaders(invaders, invadersmap, screen);
-			draw_bullets(bullets, P_BULLETS, screen);
-			draw_bullets(e_bullets, E_BULLETS, screen);
-			ennemy_hit_collision(invaders, bullets, score);
-			player_hit_collision(e_bullets, player, state, pause_time, pause_len);
-			ennemy_player_collision(invaders, player, state, pause_time, pause_len);
-			move_invaders(invaders.speed, invaders);
-			move_bullets(bullets, P_BULLETS, -30);
-			move_bullets(e_bullets, E_BULLETS, 15);
-			calculate_level(invaders, score, state, pause_time, pause_len);
-			ennemy_ai(invaders, player, e_bullets);
-			game_over_ai(player, state);
-			pause_game(pause_time, pause_len, state);
+//			draw_invaders(invaders, invadersmap, screen);
+//			draw_bullets(bullets, P_BULLETS, screen);
+//			draw_bullets(e_bullets, E_BULLETS, screen);
+//			ennemy_hit_collision(invaders, bullets, score);
+//			player_hit_collision(e_bullets, player, state, pause_time, pause_len);
+//			ennemy_player_collision(invaders, player, state, pause_time, pause_len);
+//			move_invaders(invaders.speed, invaders);
+//			move_bullets(bullets, P_BULLETS, -30);
+//			move_bullets(e_bullets, E_BULLETS, 15);
+//			calculate_level(invaders, score, state, pause_time, pause_len);
+//			ennemy_ai(invaders, player, e_bullets);
+//			game_over_ai(player, state);
+//			pause_game(pause_time, pause_len, state);
 		
 		} else if (state == game_over) {
 			
@@ -956,10 +908,9 @@ int main() {
 		sleep = next_game_tick - SDL_GetTicks();
 	
 		if( sleep >= 0 ) {
-
-            		SDL_Delay(sleep);
-        	}
+            SDL_Delay(sleep);
+        }
 	}
-	
+
 	return 0;
 }
