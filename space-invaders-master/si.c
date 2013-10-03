@@ -1,7 +1,3 @@
-//known bugs
-//some times the bullet wont go past through a base if it hits on the far left edge. cause unknowen
-//its the same bug that i found in my invaders drawing code. using the objects own hitbox as the SDL_Rect
-//as the destination rectangle to blit to. using a seperate local rect in the drawing code solves it.
 #include <stdlib.h>
 #include <stdio.h>
 #include "SDL/SDL.h"
@@ -19,13 +15,6 @@
 #define B_HEIGHT 15
 #define P_BULLETS 1
 #define E_BULLETS 3
-#define BASE 4
-#define BASE_WIDTH 60
-#define BASE_HEIGHT 40
-
-/*TODO 
-* Comment the hell out of this.
-*/
 
 enum colour_t {red, green, purple};
 enum direction_t {left, right, stationary};
@@ -33,21 +22,12 @@ enum state_t {menu, options, game, game_over, pause};
 enum ck_t {magenta, lime};
 
 struct score_t {
-
 	unsigned int shots;
 	unsigned int points;
 	unsigned int level;
 };
 
-//struct saucer_t {
-//
-//	SDL_Rect hitbox;
-//	unsigned int alive;
-//	enum direction_t direction;
-//};
-
-struct enemy_t {
-
+struct ennemy_t {
 	SDL_Rect hitbox;
 	enum colour_t colour;
 	unsigned int alive;
@@ -55,8 +35,7 @@ struct enemy_t {
 };
 
 struct invaders_t {
-
-	struct enemy_t enemy[5][10];
+	struct ennemy_t ennemy[5][10];
 	enum direction_t direction;
 	unsigned int killed;
 	int speed;
@@ -65,19 +44,12 @@ struct invaders_t {
 	Uint32 state_time;
 };
 
-//struct base_t {
-//
-//	SDL_Rect hitbox;
-//};
-
 struct player_t {
-
 	SDL_Rect hitbox;
 	int lives;
 };
 
 struct bullet_t {
-	
 	SDL_Rect hitbox;
 	unsigned int alive;
 };
@@ -88,15 +60,11 @@ static SDL_Surface *title_screen;
 static SDL_Surface *cmap;
 static SDL_Surface *invadersmap;
 static SDL_Surface *player_img;
-//static SDL_Surface *saucer_img;
-//static SDL_Surface *base_img[4];
 static SDL_Surface *damage_img;
 static SDL_Surface *damage_top_img;
 static SDL_Surface *game_over_img;
 struct score_t score;
 struct invaders_t invaders;
-//struct saucer_t saucer;
-//struct base_t base[BASE];
 struct player_t player;
 struct bullet_t bullets[P_BULLETS];
 struct bullet_t e_bullets[E_BULLETS];
@@ -112,7 +80,6 @@ int load_image(char filename[], SDL_Surface **surface, enum ck_t colour_key);
 
 //Initialize the score structure and game state
 void init_score() {
-
 	score.shots = 0;
 	score.points = 0;
 	score.level = 1;
@@ -120,7 +87,6 @@ void init_score() {
 
 //Initialize the enemies starting positions, direction, speed and colour
 void init_invaders() {
-	
 	invaders.direction = right;
 	invaders.speed = 1;
 	invaders.state = 0;
@@ -136,28 +102,28 @@ void init_invaders() {
 	
 		for (j = 0; j < 8; j++) {
 		
-			invaders.enemy[i][j].alive = 1;
-			invaders.enemy[i][j].hitbox.x = x;
-			invaders.enemy[i][j].hitbox.y = y;
-			invaders.enemy[i][j].hitbox.w = E_WIDTH;
-			invaders.enemy[i][j].hitbox.h = E_HEIGHT;
+			invaders.ennemy[i][j].alive = 1;
+			invaders.ennemy[i][j].hitbox.x = x;
+			invaders.ennemy[i][j].hitbox.y = y;
+			invaders.ennemy[i][j].hitbox.w = E_WIDTH;
+			invaders.ennemy[i][j].hitbox.h = E_HEIGHT;
 			
 			x += E_WIDTH + 20; // gap size
 			
 			if (i == 0) {
 				
-				invaders.enemy[i][j].colour = purple;
-				invaders.enemy[i][j].points = 30;
+				invaders.ennemy[i][j].colour = purple;
+				invaders.ennemy[i][j].points = 30;
 	
 			} else if (i >= 1 && i < 3) {
 			
-				invaders.enemy[i][j].colour = green;
-				invaders.enemy[i][j].points = 20;
+				invaders.ennemy[i][j].colour = green;
+				invaders.ennemy[i][j].points = 20;
 		
 			} else {
 		
-				invaders.enemy[i][j].colour = red;
-				invaders.enemy[i][j].points = 10;
+				invaders.ennemy[i][j].colour = red;
+				invaders.ennemy[i][j].points = 10;
 			}
 		}
 		
@@ -176,32 +142,6 @@ void init_player() {
 	player.lives = 3;
 }
 
-//Initialize the bases starting position and dimensions
-//void init_bases() {
-//
-//	int i;
-//	int base_total = BASE_WIDTH * 4;
-//	int space_left = WIDTH - base_total;
-//	int even_space = space_left / 5; // 5 gaps
-//	int x = even_space;
-//	int y = 500;
-//
-//	for (i = 0; i < BASE; i++) {
-//
-//		base[i].hitbox.x = x;
-//		base[i].hitbox.y = y;
-//		base[i].hitbox.w = BASE_WIDTH;
-//		base[i].hitbox.h = BASE_HEIGHT;
-//
-//		x += BASE_WIDTH + even_space; //distance apart
-//	}
-//
-//	load_image("base.bmp", &base_img[0], magenta);
-//	load_image("base.bmp", &base_img[1], magenta);
-//	load_image("base.bmp", &base_img[2], magenta);
-//	load_image("base.bmp", &base_img[3], magenta);
-//}
-
 //Initialize the player bullets dimensions
 void init_bullets(struct bullet_t b[], int max) {
 
@@ -216,17 +156,6 @@ void init_bullets(struct bullet_t b[], int max) {
 		b[i].hitbox.h = B_HEIGHT;
 	}
 }
-
-//Initialize the saucer position and dimensions
-//void init_saucer() {
-//
-//	saucer.hitbox.x = 0;
-//	saucer.hitbox.y	= 0;
-//	saucer.hitbox.w	= 30;
-//	saucer.hitbox.h = 20;
-//	saucer.alive = 0;
-//	saucer.direction = right;
-//}
 
 //Draw the background
 void draw_background () {
@@ -309,22 +238,6 @@ void draw_title_screen() {
 	SDL_BlitSurface(title_screen, &src, screen, &dest);
 }
 
-//Draw the saucer if its alive
-//void draw_saucer() {
-//
-//	SDL_Rect src;
-//
-//	src.x = 0;
-//	src.y = 0;
-//	src.w = 30;
-//	src.h = 20;
-//
-//	if (saucer.alive == 1) {
-//
-//		SDL_BlitSurface(saucer_img, &src, screen, &saucer.hitbox);
-//	}
-//}
-
 //Draw the invaders if there alive
 void draw_invaders() {
 
@@ -338,7 +251,7 @@ void draw_invaders() {
 		
 		for (j = 0; j < 8; j++) {
 			
-			if (invaders.enemy[i][j].alive == 1) {
+			if (invaders.ennemy[i][j].alive == 1) {
 				
 				//purple
 				if(i == 0) {	
@@ -383,34 +296,16 @@ void draw_invaders() {
 					}
 				}
 
-				dest.x = invaders.enemy[i][j].hitbox.x;
-				dest.y = invaders.enemy[i][j].hitbox.y;
-				dest.w = invaders.enemy[i][j].hitbox.w;
-				dest.h = invaders.enemy[i][j].hitbox.h;
+				dest.x = invaders.ennemy[i][j].hitbox.x;
+				dest.y = invaders.ennemy[i][j].hitbox.y;
+				dest.w = invaders.ennemy[i][j].hitbox.w;
+				dest.h = invaders.ennemy[i][j].hitbox.h;
 				
 				SDL_BlitSurface(invadersmap, &src, screen, &dest);
 			}
 		}
 	}
 }
-
-//Draw the bases
-//void draw_bases() {
-//
-//	SDL_Rect src;
-//
-//	src.x = 0;
-//	src.y = 0;
-//	src.w = BASE_WIDTH;
-//	src.h = BASE_HEIGHT;
-//
-//	int i;
-//
-//	for(i = 0; i < BASE; i++) {
-//
-//		SDL_BlitSurface(base_img[i], &src, screen, &base[i].hitbox);
-//	}
-//}
 
 //Draw the player
 void draw_player() {
@@ -425,7 +320,7 @@ void draw_player() {
 	SDL_BlitSurface(player_img, &src, screen, &player.hitbox);
 }
 
-//Draw both the enemy and the players bullets if there alive
+//Draw both the ennemy and the players bullets if there alive
 void draw_bullets(struct bullet_t b[], int max) {
 
 	//Uint8 c = SDL_MapRGB(screen->format, 255, 255, 255);
@@ -544,7 +439,7 @@ void set_invaders_speed() {
 	}
 }
 
-//Move positions of both enemy and player bullets on screen
+//Move positions of both ennemy and player bullets on screen
 int move_bullets(struct bullet_t b[], int max, int speed) {
 	
 	int i;
@@ -579,7 +474,7 @@ void move_invaders_down() {
 		
 		for (j = 0; j < 10; j++) {
 		
-			invaders.enemy[i][j].hitbox.y += 15;
+			invaders.ennemy[i][j].hitbox.y += 15;
 		}
 	}
 }
@@ -599,9 +494,9 @@ int move_invaders(int speed) {
 			
 				for (j = 0; j < 5; j++) {
 				
-					if (invaders.enemy[j][i].alive == 1) {
+					if (invaders.ennemy[j][i].alive == 1) {
 		
-						if (invaders.enemy[j][i].hitbox.x <= 0) {
+						if (invaders.ennemy[j][i].hitbox.x <= 0) {
 						
 							invaders.direction = right;
 							move_invaders_down();
@@ -623,7 +518,7 @@ int move_invaders(int speed) {
 						}
 						
 						//move invader speed number of pixels
-						invaders.enemy[j][i].hitbox.x -= invaders.speed;
+						invaders.ennemy[j][i].hitbox.x -= invaders.speed;
 					}
 				}
 			}
@@ -636,9 +531,9 @@ int move_invaders(int speed) {
 			
 				for (j = 0; j < 5; j++) {
 				
-					if (invaders.enemy[j][i].alive == 1) {
+					if (invaders.ennemy[j][i].alive == 1) {
 					
-						if (invaders.enemy[j][i].hitbox.x + E_WIDTH >= WIDTH) {
+						if (invaders.ennemy[j][i].hitbox.x + E_WIDTH >= WIDTH) {
 					
 							invaders.direction = left;
 							move_invaders_down();
@@ -659,7 +554,7 @@ int move_invaders(int speed) {
 							}
 						}
 						
-						invaders.enemy[j][i].hitbox.x += invaders.speed;
+						invaders.ennemy[j][i].hitbox.x += invaders.speed;
 					}
 				}
 			}
@@ -693,37 +588,6 @@ void move_player(enum direction_t direction) {
 	}
 }
 
-//Move saucer based on there current direction
-//void move_saucer() {
-//
-//	if (saucer.alive == 1) {
-//
-//		if (saucer.direction == left) {
-//
-//			saucer.hitbox.x -= 5;
-//
-//			if (saucer.hitbox.x < 0) {
-//
-//				saucer.alive = 0;
-//				saucer.hitbox.x = 0;
-//				saucer.direction = right;
-//			}
-//		}
-//
-//		if (saucer.direction == right) {
-//
-//			saucer.hitbox.x += 5;
-//
-//			if (saucer.hitbox.x + saucer.hitbox.w > WIDTH) {
-//
-//				saucer.alive = 0;
-//				saucer.hitbox.x = WIDTH - saucer.hitbox.w;
-//				saucer.direction = left;
-//			}
-//		}
-//	}
-//}
-
 //Detect any collision between any two non rotated rectangles
 int collision(SDL_Rect a, SDL_Rect b) {
 
@@ -750,182 +614,8 @@ int collision(SDL_Rect a, SDL_Rect b) {
 	return 1;
 }
 
-//Create damage to the base sprite for player and enemy bullet collisions
-//void bullet_base_damage(struct base_t *base, int b_num, struct bullet_t *bullet, int l) {
-//
-//	int i;
-//	int x,y;
-//	SDL_Rect src;
-//	SDL_Rect dest;
-//
-//	SDL_LockSurface(base_img[b_num]);
-//	Uint8 *raw_pixels;
-//
-//	raw_pixels = (Uint8 *) base_img[b_num]->pixels;
-//
-//	int pix_offset;
-//
-//	//bottom
-//	if (l == 0) {
-//
-//		//how far from the left did the bullet hit the base sprite
-//		x = (bullet->hitbox.x + 3) - base->hitbox.x;
-//
-//		//start from bottom of the base sprite
-//		y = base->hitbox.h - 1;
-//
-//		for(i = 0; i < base->hitbox.h; i++) {
-//
-//			//the x calculation can get us to pixel column 60 when 59 is the maximum (0 - 59 is 60 pixels)
-//			if (x >= BASE_WIDTH) {
-//				x = BASE_WIDTH - 1;
-//			}
-//
-//			pix_offset = y * base_img[b_num]->pitch  + x;
-//
-//			//found part part of the base sprite that is NOT magenta(index)
-//			//searching from the bottom up
-//			if (raw_pixels[pix_offset] != 227) {
-//
-//				bullet->alive = 0;
-//
-//				src.x = 0;
-//				src.y = 0;
-//				src.w = 11;
-//				src.h = 15;
-//
-//				dest.x = x - 3;
-//				dest.y = y - 14;
-//				dest.w = 11;
-//				dest.h = 15;
-//
-//				SDL_UnlockSurface(base_img[b_num]);
-//				SDL_BlitSurface(damage_img, &src, base_img[b_num], &dest);
-//
-//				break;
-//			}
-//
-//			y--;
-//		}
-//	}
-//
-//	//top
-//	if (l == 1) {
-//
-//		//how far from the left did the bullet hit the base sprite
-//		x = (bullet->hitbox.x + 3) - base->hitbox.x;
-//
-//		//start from top of the base sprite
-//		y = 0;
-//
-//		for(i = 0; i < base->hitbox.h; i++) {
-//
-//			//the x calculation can get us to pixel column 60 when 59 is the maximum (0 - 59 is 60 pixels)
-//			if (x >= BASE_WIDTH) {
-//				x = BASE_WIDTH - 1;
-//			}
-//
-//			pix_offset = y * base_img[b_num]->pitch  + x;
-//
-//			//found part part of the base sprite that is NOT magenta(index)
-//			//searching from the top down
-//			if (raw_pixels[pix_offset] != 227) {
-//
-//				bullet->alive = 0;
-//
-//				src.x = 0;
-//				src.y = 0;
-//				src.w = 11;
-//				src.h = 15;
-//
-//				dest.x = x - 3;
-//				dest.y = y;
-//				dest.w = 11;
-//				dest.h = 15;
-//
-//				SDL_UnlockSurface(base_img[b_num]);
-//				SDL_BlitSurface(damage_top_img, &src, base_img[b_num], &dest);
-//
-//				break;
-//			}
-//
-//			y++;
-//		}
-//	}
-//
-//	SDL_UnlockSurface(base_img[b_num]);
-//}
-
-//Create damage to the base sprite for enemy and base collisions
-//void enemy_base_damage(struct enemy_t *enemy, struct base_t *base, int index) {
-//
-//	int x,y;
-//	SDL_Rect dest;
-//
-//	//the x hot spot is taken from the top left of the sprite with the speed in pixels
-//	//added ahead in case the enemy skips the last few pixels of the sprite and
-//	//the collision is no longer detected. Speed in pixels is subtracted if traveling left
-//
-//	if (invaders.direction == right) {
-//
-//		x = (enemy->hitbox.x + invaders.speed) - base->hitbox.x;
-//		y = enemy->hitbox.y - base->hitbox.y;
-//
-//		if (x > 0) {
-//
-//			dest.x = 0;
-//			dest.y = y;
-//			dest.w = x;
-//			dest.h = enemy->hitbox.h;
-//
-//			SDL_FillRect(base_img[index], &dest, 227);
-//		}
-//
-//	} else if (invaders.direction == left){
-//
-//		x = (enemy->hitbox.x + (enemy->hitbox.w - 1)) - invaders.speed;
-//		x = x - base->hitbox.x;
-//		y = enemy->hitbox.y - base->hitbox.y;
-//
-//		if (x < base->hitbox.w) {
-//
-//			dest.x = x;
-//			dest.y = y;
-//			dest.w = base->hitbox.w - 1;
-//			dest.h = enemy->hitbox.h;
-//
-//			SDL_FillRect(base_img[index], &dest, 227);
-//		}
-//	}
-//}
-
-//Look for collisions based on enemy and base rectangles
-//void enemy_base_collision() {
-//
-//	int i,j,k,c;
-//
-//	for (i = 0; i < 5; i++) {
-//
-//		for (j = 0;  j < 10; j++) {
-//
-//			for (k = 0;  k < BASE; k++) {
-//
-//				if (invaders.enemy[i][j].alive == 1) {
-//
-//					c = collision(invaders.enemy[i][j].hitbox,base[k].hitbox);
-//
-//					if (c == 1) {
-//
-//						enemy_base_damage(&invaders.enemy[i][j], &base[k], k);
-//					}
-//				}
-//			}
-//		}
-//	}
-//}
-
 //Look for collisions based on player bullet and invader rectangles
-void enemy_hit_collision() {
+void ennemy_hit_collision() {
 
 	int i,j,k,c;
 	
@@ -933,22 +623,22 @@ void enemy_hit_collision() {
 		
 		for (j = 0; j < 10; j++) {
 			
-			if (invaders.enemy[i][j].alive == 1) {
+			if (invaders.ennemy[i][j].alive == 1) {
 			
 				for (k = 0; k < P_BULLETS; k++) {
 			
 					if (bullets[k].alive == 1) {
 						
-						c = collision(bullets[k].hitbox, invaders.enemy[i][j].hitbox);
+						c = collision(bullets[k].hitbox, invaders.ennemy[i][j].hitbox);
 				
 						if (c == 1) {
 				
-							invaders.enemy[i][j].alive = 0;
+							invaders.ennemy[i][j].alive = 0;
 							bullets[k].alive = 0;
 							bullets[k].hitbox.x = 0;
 							bullets[k].hitbox.y = 0;
 							invaders.killed++;
-							score.points += invaders.enemy[i][j].points;
+							score.points += invaders.ennemy[i][j].points;
 						}
 					}
 				}
@@ -957,7 +647,7 @@ void enemy_hit_collision() {
 	}
 }
 
-//Look for collisions based on enemy bullet and player rectangles
+//Look for collisions based on ennemy bullet and player rectangles
 void player_hit_collision() {
 
 	int i,c;
@@ -980,62 +670,8 @@ void player_hit_collision() {
 	}
 }
 
-//Look for collisions based on player bullet and saucer rectangles
-//void saucer_hit_collision() {
-//
-//	int i,c;
-//
-//	if (saucer.alive == 1) {
-//
-//		for(i = 0; i < P_BULLETS; i++) {
-//
-//			if (bullets[i].alive == 1) {
-//
-//				c = collision(bullets[i].hitbox, saucer.hitbox);
-//
-//				if (c == 1) {
-//
-//					int r = rand() % 3;
-//
-//					switch (r) {
-//
-//						case 0:
-//							score.points += 50;
-//							break;
-//
-//						case 1:
-//							score.points += 150;
-//							break;
-//
-//						case 2:
-//							score.points += 300;
-//							break;
-//
-//						default:
-//							break;
-//					}
-//
-//					//sucer was hit reset for next time
-//					saucer.alive = 0;
-//
-//					if (saucer.direction == left) {
-//
-//						saucer.hitbox.x = 0;
-//						saucer.direction = right;
-//
-//					} else if (saucer.direction == right) {
-//
-//						saucer.hitbox.x = WIDTH - saucer.hitbox.w;
-//						saucer.direction = left;
-//					}
-//				}
-//			}
-//		}
-//	}
-//}
-
 //Look for collisions based on invader and player rectangles
-int enemy_player_collision() {
+int ennemy_player_collision() {
 
 	int i,j,c;
 
@@ -1043,9 +679,9 @@ int enemy_player_collision() {
 
 		for(j = 0; j < 10; j++) {
 		
-			if (invaders.enemy[i][j].alive == 1) {
+			if (invaders.ennemy[i][j].alive == 1) {
 					
-				c = collision(player.hitbox, invaders.enemy[i][j].hitbox);
+				c = collision(player.hitbox, invaders.ennemy[i][j].hitbox);
 
 				if (c == 1) {
 				
@@ -1061,28 +697,6 @@ int enemy_player_collision() {
 
 	return 0;
 }
-
-//Look for collisions based on bullet and base rectangles
-//void bullet_base_collision(struct bullet_t b[], int max, int l) {
-//
-//	int i,j,c;
-//
-//	for (i = 0; i < max; i++) {
-//
-//		for (j = 0; j < BASE; j++) {
-//
-//			if (b[i].alive == 1) {
-//
-//				c = collision(b[i].hitbox, base[j].hitbox);
-//
-//				if (c == 1) {
-//
-//					bullet_base_damage(&base[j], j, &b[i],l);
-//				}
-//			}
-//		}
-//	}
-//}
 
 //Determine for game over event
 void game_over_ai() {
@@ -1127,18 +741,8 @@ void calculate_level() {
 	}
 }
 
-//Determine when saucer should appear
-//void saucer_ai() {
-//
-//	//every 20 shots
-//	if (score.shots != 0 && score.shots % 20 == 0) {
-//
-//		saucer.alive = 1;
-//	}
-//}
-
 //Determine when invaders should shoot
-void enemy_ai() {
+void ennemy_ai() {
 
 	int i, j, k;
 
@@ -1146,14 +750,14 @@ void enemy_ai() {
 		
 		for (j = 4; j >= 0; j--) {
 			
-			if (invaders.enemy[j][i].alive == 1) {
+			if (invaders.ennemy[j][i].alive == 1) {
 				
 				//player
 				int mid_point = player.hitbox.x + (player.hitbox.w / 2);
 				
-				//enemy
-				int start = invaders.enemy[j][i].hitbox.x;
-				int end = invaders.enemy[j][i].hitbox.x + invaders.enemy[j][i].hitbox.w;
+				//ennemy
+				int start = invaders.ennemy[j][i].hitbox.x;
+				int end = invaders.ennemy[j][i].hitbox.x + invaders.ennemy[j][i].hitbox.w;
 
 				if (mid_point > start && mid_point < end) {
 
@@ -1166,7 +770,7 @@ void enemy_ai() {
 
 							if (r == 1) {
 								e_bullets[k].hitbox.x = start + (E_WIDTH / 2) ;
-								e_bullets[k].hitbox.y = invaders.enemy[j][i].hitbox.y;
+								e_bullets[k].hitbox.y = invaders.ennemy[j][i].hitbox.y;
 								e_bullets[k].alive = 1;
 							}
 
@@ -1175,7 +779,7 @@ void enemy_ai() {
 					}
 				}
 				
-				//alive enemy found reversing up the enemy grid dont check the rest of the colum
+				//alive ennemy found reversing up the ennemy grid dont check the rest of the colum
 				break;
 			}
 		}
@@ -1271,7 +875,6 @@ int main() {
 	load_image("cmap.bmp", &cmap, magenta);
 	load_image("invaders.bmp", &invadersmap, magenta);
 	load_image("player.bmp", &player_img, magenta);
-//	load_image("saucer.bmp", &saucer_img, magenta);
 	load_image("gameover.bmp", &game_over_img, magenta);
 	load_image("damage.bmp", &damage_img, lime);
 	load_image("damagetop.bmp", &damage_top_img, lime);
@@ -1284,9 +887,7 @@ int main() {
 
 	init_score();
 	init_invaders();
-//	init_bases();
 	init_player();
-//	init_saucer();
 	init_bullets(bullets, P_BULLETS);
 	init_bullets(e_bullets, E_BULLETS);
 	state = menu;
@@ -1321,12 +922,10 @@ int main() {
 							} else if (state == game){
 								
 								player_shoot();
-//								saucer_ai();
-							
+
 							} else if (state == game_over) {
 							
 								init_invaders();
-//								init_bases();
 								init_score();
 								init_player();
 								state = game;
@@ -1399,24 +998,17 @@ int main() {
 
 			draw_hud();
 			draw_player();
-//			draw_bases();
 			draw_invaders();
-//			draw_saucer();
 			draw_bullets(bullets, P_BULLETS);
 			draw_bullets(e_bullets, E_BULLETS);
-			enemy_hit_collision();
+			ennemy_hit_collision();
 			player_hit_collision();
-//			enemy_base_collision();
-//			saucer_hit_collision();
-//			bullet_base_collision(e_bullets, E_BULLETS, 1);
-//			bullet_base_collision(bullets, P_BULLETS, 0);
-			enemy_player_collision();
+			ennemy_player_collision();
 			move_invaders(invaders.speed);
-//			move_saucer();
 			move_bullets(bullets, P_BULLETS, -30);
 			move_bullets(e_bullets, E_BULLETS, 15);
 			calculate_level();
-			enemy_ai();
+			ennemy_ai();
 			game_over_ai();
 			pause_game();
 		
@@ -1424,9 +1016,7 @@ int main() {
 			
 			draw_hud();
 			draw_player();
-//			draw_bases();
 			draw_invaders();
-//			draw_saucer();
 			draw_bullets(bullets, P_BULLETS);
 			draw_bullets(e_bullets, E_BULLETS);
 			draw_game_over();
@@ -1435,9 +1025,7 @@ int main() {
 			
 			draw_hud();
 			draw_player();
-//			draw_bases();
 			draw_invaders();
-//			draw_saucer();
 			draw_bullets(bullets, P_BULLETS);
 			draw_bullets(e_bullets, E_BULLETS);
 			pause_game();
