@@ -52,21 +52,38 @@ struct bullet_t {
 	unsigned int alive;
 };
 
-SDL_Surface *screen;
-SDL_Surface *title_screen;
-SDL_Surface *cmap;
-SDL_Surface *invadersmap;
-SDL_Surface *player_img;
-SDL_Surface *damage_img;
-SDL_Surface *damage_top_img;
-SDL_Surface *game_over_img;
-struct invaders_t invaders;
-
+void init_score(struct score_t score);
+void init_player(struct player_t player);
+void draw_background (SDL_Surface *screen);
+void draw_hud(SDL_Surface *screen, struct score_t score, struct player_t player, SDL_Surface *cmap);
+void draw_title_screen(SDL_Surface *title_screen, SDL_Surface *screen);
+void draw_player(SDL_Surface *player_img, SDL_Surface *screen, struct player_t player);
+void draw_bullets(struct bullet_t b[], int max, SDL_Surface *screen);
+int draw_char(char c, int x, int y, SDL_Surface *cmap, SDL_Surface *screen);
+void draw_string(char s[], int x, int y, SDL_Surface *cmap, SDL_Surface *screen);
+void draw_game_over(SDL_Surface *game_over_img, SDL_Surface *screen);
+int move_bullets(struct bullet_t b[], int max, int speed);
+void move_player(enum direction_t direction, struct player_t player);
+int collision(SDL_Rect a, SDL_Rect b);
+void ennemy_hit_collision(struct invaders_t invaders, struct bullet_t *bullets, struct score_t score);
+void player_hit_collision(struct bullet_t *e_bullets, struct player_t player, enum state_t state, Uint32 pause_time, unsigned int pause_len);
+int ennemy_player_collision(struct invaders_t invaders, struct player_t player, enum state_t state, Uint32 pause_time, unsigned int pause_len);
+void game_over_ai(struct player_t player, enum state_t state);
+void player_shoot(struct bullet_t *bullets, struct score_t score, struct player_t player);
+void calculate_level(struct invaders_t invaders, struct score_t score, enum state_t state, Uint32 pause_time, unsigned int pause_len);
+void ennemy_ai(struct invaders_t invaders, struct player_t player, struct bullet_t *e_bullets);
+void pause_game(Uint32 pause_time, unsigned int pause_len, enum state_t state);
+void pause_for(unsigned int len, enum state_t state, Uint32 pause_time, unsigned int pause_len);
 int load_image(char filename[], SDL_Surface **surface, enum ck_t colour_key);
 void init_invaders();
 void draw_invaders(struct invaders_t invaders, SDL_Surface *invadersmap, SDL_Surface *screen);
 void set_invaders_speed(struct invaders_t invaders);
-void move_invaders_down();
+void move_invaders_down(struct invaders_t invaders);
 int move_invaders(int speed, struct invaders_t invaders);
+
+
+
+
+
 
 #endif
