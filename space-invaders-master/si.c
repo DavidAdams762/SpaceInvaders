@@ -1,68 +1,21 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "SDL/SDL.h"
+#include "space.h"
 
-#define SCREEN_WIDTH 800 
-#define SCREEN_HEIGHT 600
-#define E_WIDTH 30
-#define WIDTH 600 
-#define HEIGHT 600
-#define E_WIDTH 30
-#define E_HEIGHT 30
-#define P_WIDTH 30
-#define P_HEIGHT 10
-#define B_WIDTH 5
-#define B_HEIGHT 15
-#define P_BULLETS 1
-#define E_BULLETS 3
 
-enum colour_t {red, green, purple};
-enum direction_t {left, right, stationary};
-enum state_t {menu, options, game, game_over, pause};
-enum ck_t {magenta, lime};
-
-struct score_t {
-	unsigned int shots;
-	unsigned int points;
-	unsigned int level;
-};
-
-struct ennemy_t {
-	SDL_Rect hitbox;
-	enum colour_t colour;
-	unsigned int alive;
-	unsigned int points;
-};
-
-struct invaders_t {
-	struct ennemy_t ennemy[5][10];
-	enum direction_t direction;
-	unsigned int killed;
-	int speed;
-	int state;
-	int state_speed;
-	Uint32 state_time;
-};
-
-struct player_t {
-	SDL_Rect hitbox;
-	int lives;
-};
-
-struct bullet_t {
-	SDL_Rect hitbox;
-	unsigned int alive;
-};
 
 //global variables, for convenience.
-static SDL_Surface *screen;
-static SDL_Surface *title_screen;
-static SDL_Surface *cmap;
-static SDL_Surface *invadersmap;
-static SDL_Surface *player_img;
-static SDL_Surface *damage_img;
-static SDL_Surface *damage_top_img;
-static SDL_Surface *game_over_img;
+SDL_Surface *screen;
+SDL_Surface *title_screen;
+SDL_Surface *cmap;
+SDL_Surface *invadersmap;
+SDL_Surface *player_img;
+SDL_Surface *damage_img;
+SDL_Surface *damage_top_img;
+SDL_Surface *game_over_img;
+struct invaders_t invaders;
+
 struct score_t score;
 struct invaders_t invaders;
 struct player_t player;
@@ -86,51 +39,51 @@ void init_score() {
 }
 
 //Initialize the enemies starting positions, direction, speed and colour
-void init_invaders() {
-	invaders.direction = right;
-	invaders.speed = 1;
-	invaders.state = 0;
-	invaders.killed = 0;
-	invaders.state_speed = 1000;
-	invaders.state_time = SDL_GetTicks();
-
-	int i,j;
-	int x = 0;
-	int y = 30;
-	
-	for (i = 0; i < 5; i++) {
-	
-		for (j = 0; j < 8; j++) {
-		
-			invaders.ennemy[i][j].alive = 1;
-			invaders.ennemy[i][j].hitbox.x = x;
-			invaders.ennemy[i][j].hitbox.y = y;
-			invaders.ennemy[i][j].hitbox.w = E_WIDTH;
-			invaders.ennemy[i][j].hitbox.h = E_HEIGHT;
-			
-			x += E_WIDTH + 20; // gap size
-			
-			if (i == 0) {
-				
-				invaders.ennemy[i][j].colour = purple;
-				invaders.ennemy[i][j].points = 30;
-	
-			} else if (i >= 1 && i < 3) {
-			
-				invaders.ennemy[i][j].colour = green;
-				invaders.ennemy[i][j].points = 20;
-		
-			} else {
-		
-				invaders.ennemy[i][j].colour = red;
-				invaders.ennemy[i][j].points = 10;
-			}
-		}
-		
-		x = 0; //reset line
-		y += E_HEIGHT + 20;
-	}
-}
+//void init_invaders() {
+//	invaders.direction = right;
+//	invaders.speed = 1;
+//	invaders.state = 0;
+//	invaders.killed = 0;
+//	invaders.state_speed = 1000;
+//	invaders.state_time = SDL_GetTicks();
+//
+//	int i,j;
+//	int x = 0;
+//	int y = 30;
+//
+//	for (i = 0; i < 5; i++) {
+//
+//		for (j = 0; j < 8; j++) {
+//
+//			invaders.ennemy[i][j].alive = 1;
+//			invaders.ennemy[i][j].hitbox.x = x;
+//			invaders.ennemy[i][j].hitbox.y = y;
+//			invaders.ennemy[i][j].hitbox.w = E_WIDTH;
+//			invaders.ennemy[i][j].hitbox.h = E_HEIGHT;
+//
+//			x += E_WIDTH + 20; // gap size
+//
+//			if (i == 0) {
+//
+//				invaders.ennemy[i][j].colour = purple;
+//				invaders.ennemy[i][j].points = 30;
+//
+//			} else if (i >= 1 && i < 3) {
+//
+//				invaders.ennemy[i][j].colour = green;
+//				invaders.ennemy[i][j].points = 20;
+//
+//			} else {
+//
+//				invaders.ennemy[i][j].colour = red;
+//				invaders.ennemy[i][j].points = 10;
+//			}
+//		}
+//
+//		x = 0; //reset line
+//		y += E_HEIGHT + 20;
+//	}
+//}
 
 //Initialize the player starting position and dimensions
 void init_player() {
@@ -239,73 +192,73 @@ void draw_title_screen() {
 }
 
 //Draw the invaders if there alive
-void draw_invaders() {
-
-	SDL_Rect src, dest;
-	int i,j;
-	
-	src.w = E_WIDTH;
-	src.h = E_HEIGHT;
-	
-	for (i = 0; i < 5; i++) {
-		
-		for (j = 0; j < 8; j++) {
-			
-			if (invaders.ennemy[i][j].alive == 1) {
-				
-				//purple
-				if(i == 0) {	
-					
-					if (invaders.state == 0) {
-						
-						src.x = 0;
-						src.y = 0;
-					
-					} else {
-						
-						src.x = 30;
-						src.y = 0;				
-					}
-				
-				//green
-				} else if (i > 0 && i < 3) {
-					
-					if (invaders.state == 0) {
-						
-						src.x = 0;
-						src.y = E_HEIGHT;
-
-					} else {
-						
-						src.x = 30;
-						src.y = E_HEIGHT;
-					}
-
-				//red
-				} else {
-					
-					if (invaders.state == 0) {
-					
-						src.x = 0;
-						src.y = E_HEIGHT * 2;
-					
-					} else {
-					
-						src.x = 30;
-						src.y = E_HEIGHT * 2;	
-					}
-				}
-
-				dest.x = invaders.ennemy[i][j].hitbox.x;
-				dest.y = invaders.ennemy[i][j].hitbox.y;
-				dest.w = invaders.ennemy[i][j].hitbox.w;
-				dest.h = invaders.ennemy[i][j].hitbox.h;
-				
-				SDL_BlitSurface(invadersmap, &src, screen, &dest);
-			}
-		}
-	}
-}
+//void draw_invaders() {
+//
+//	SDL_Rect src, dest;
+//	int i,j;
+//
+//	src.w = E_WIDTH;
+//	src.h = E_HEIGHT;
+//
+//	for (i = 0; i < 5; i++) {
+//
+//		for (j = 0; j < 8; j++) {
+//
+//			if (invaders.ennemy[i][j].alive == 1) {
+//
+//				//purple
+//				if(i == 0) {
+//
+//					if (invaders.state == 0) {
+//
+//						src.x = 0;
+//						src.y = 0;
+//
+//					} else {
+//
+//						src.x = 30;
+//						src.y = 0;
+//					}
+//
+//				//green
+//				} else if (i > 0 && i < 3) {
+//
+//					if (invaders.state == 0) {
+//
+//						src.x = 0;
+//						src.y = E_HEIGHT;
+//
+//					} else {
+//
+//						src.x = 30;
+//						src.y = E_HEIGHT;
+//					}
+//
+//				//red
+//				} else {
+//
+//					if (invaders.state == 0) {
+//
+//						src.x = 0;
+//						src.y = E_HEIGHT * 2;
+//
+//					} else {
+//
+//						src.x = 30;
+//						src.y = E_HEIGHT * 2;
+//					}
+//				}
+//
+//				dest.x = invaders.ennemy[i][j].hitbox.x;
+//				dest.y = invaders.ennemy[i][j].hitbox.y;
+//				dest.w = invaders.ennemy[i][j].hitbox.w;
+//				dest.h = invaders.ennemy[i][j].hitbox.h;
+//
+//				SDL_BlitSurface(invadersmap, &src, screen, &dest);
+//			}
+//		}
+//	}
+//}
 
 //Draw the player
 void draw_player() {
@@ -409,35 +362,35 @@ void draw_game_over() {
 }
 
 //Set invader movment speed
-void set_invaders_speed() {
-
-	switch (invaders.killed) {
-		
-		case 10:
-
-			invaders.speed = 2;
-			invaders.state_speed = 800;
-			break;
-		
-		case 20:
-
-			invaders.speed = 4;
-			invaders.state_speed = 600;
-			break;
-		
-		case 30:
-
-			invaders.speed = 8;
-			invaders.state_speed = 200;
-			break;
-		
-		case 40:
-
-			invaders.speed = 16;
-			invaders.state_speed = 0;
-			break;
-	}
-}
+//void set_invaders_speed() {
+//
+//	switch (invaders.killed) {
+//
+//		case 10:
+//
+//			invaders.speed = 2;
+//			invaders.state_speed = 800;
+//			break;
+//
+//		case 20:
+//
+//			invaders.speed = 4;
+//			invaders.state_speed = 600;
+//			break;
+//
+//		case 30:
+//
+//			invaders.speed = 8;
+//			invaders.state_speed = 200;
+//			break;
+//
+//		case 40:
+//
+//			invaders.speed = 16;
+//			invaders.state_speed = 0;
+//			break;
+//	}
+//}
 
 //Move positions of both ennemy and player bullets on screen
 int move_bullets(struct bullet_t b[], int max, int speed) {
@@ -466,108 +419,108 @@ int move_bullets(struct bullet_t b[], int max, int speed) {
 }
 
 //Move invaders down one space once the reach the edge
-void move_invaders_down() {
-
-	int i,j;
-
-	for (i = 0; i < 5; i++) {
-		
-		for (j = 0; j < 10; j++) {
-		
-			invaders.ennemy[i][j].hitbox.y += 15;
-		}
-	}
-}
+//void move_invaders_down() {
+//
+//	int i,j;
+//
+//	for (i = 0; i < 5; i++) {
+//
+//		for (j = 0; j < 10; j++) {
+//
+//			invaders.ennemy[i][j].hitbox.y += 15;
+//		}
+//	}
+//}
 
 //Move invaders based on there current direction
-int move_invaders(int speed) {
-	
-	set_invaders_speed();
-	
-	int i,j;
-
-	switch (invaders.direction) {
-		
-		case left:
-		
-			for (i = 0; i < 10; i++) {
-			
-				for (j = 0; j < 5; j++) {
-				
-					if (invaders.ennemy[j][i].alive == 1) {
-		
-						if (invaders.ennemy[j][i].hitbox.x <= 0) {
-						
-							invaders.direction = right;
-							move_invaders_down();
-							return 0;
-						}
-						
-						if (invaders.state_time + invaders.state_speed < SDL_GetTicks()) {
-						
-							invaders.state_time = SDL_GetTicks();
-							
-							if (invaders.state == 1) {
-								
-								invaders.state = 0;
-
-							} else {
-								
-								invaders.state = 1;
-							}
-						}
-						
-						//move invader speed number of pixels
-						invaders.ennemy[j][i].hitbox.x -= invaders.speed;
-					}
-				}
-			}
-
-			break;
-
-		case right:
-			
-			for (i = 9; i >= 0; i--) {
-			
-				for (j = 0; j < 5; j++) {
-				
-					if (invaders.ennemy[j][i].alive == 1) {
-					
-						if (invaders.ennemy[j][i].hitbox.x + E_WIDTH >= WIDTH) {
-					
-							invaders.direction = left;
-							move_invaders_down();
-							return 0;
-						}
-		
-						if (invaders.state_time + invaders.state_speed < SDL_GetTicks()) {
-						
-							invaders.state_time = SDL_GetTicks();
-
-							if (invaders.state == 1) {
-								
-								invaders.state = 0;
-
-							} else {
-								
-								invaders.state = 1;
-							}
-						}
-						
-						invaders.ennemy[j][i].hitbox.x += invaders.speed;
-					}
-				}
-			}
-
-			break;
-
-		default:
-			break;
-
-	}
-
-	return 0;
-}
+//int move_invaders(int speed) {
+//
+//	set_invaders_speed();
+//
+//	int i,j;
+//
+//	switch (invaders.direction) {
+//
+//		case left:
+//
+//			for (i = 0; i < 10; i++) {
+//
+//				for (j = 0; j < 5; j++) {
+//
+//					if (invaders.ennemy[j][i].alive == 1) {
+//
+//						if (invaders.ennemy[j][i].hitbox.x <= 0) {
+//
+//							invaders.direction = right;
+//							move_invaders_down();
+//							return 0;
+//						}
+//
+//						if (invaders.state_time + invaders.state_speed < SDL_GetTicks()) {
+//
+//							invaders.state_time = SDL_GetTicks();
+//
+//							if (invaders.state == 1) {
+//
+//								invaders.state = 0;
+//
+//							} else {
+//
+//								invaders.state = 1;
+//							}
+//						}
+//
+//						//move invader speed number of pixels
+//						invaders.ennemy[j][i].hitbox.x -= invaders.speed;
+//					}
+//				}
+//			}
+//
+//			break;
+//
+//		case right:
+//
+//			for (i = 9; i >= 0; i--) {
+//
+//				for (j = 0; j < 5; j++) {
+//
+//					if (invaders.ennemy[j][i].alive == 1) {
+//
+//						if (invaders.ennemy[j][i].hitbox.x + E_WIDTH >= WIDTH) {
+//
+//							invaders.direction = left;
+//							move_invaders_down();
+//							return 0;
+//						}
+//
+//						if (invaders.state_time + invaders.state_speed < SDL_GetTicks()) {
+//
+//							invaders.state_time = SDL_GetTicks();
+//
+//							if (invaders.state == 1) {
+//
+//								invaders.state = 0;
+//
+//							} else {
+//
+//								invaders.state = 1;
+//							}
+//						}
+//
+//						invaders.ennemy[j][i].hitbox.x += invaders.speed;
+//					}
+//				}
+//			}
+//
+//			break;
+//
+//		default:
+//			break;
+//
+//	}
+//
+//	return 0;
+//}
 
 //Move player left or right
 void move_player(enum direction_t direction) {
@@ -847,7 +800,24 @@ int load_image(char filename[], SDL_Surface **surface, enum ck_t colour_key) {
 
 //Main program
 int main() {
-	
+    SDL_Surface *screen;
+    SDL_Surface *title_screen;
+    SDL_Surface *cmap;
+    SDL_Surface *invadersmap;
+    SDL_Surface *player_img;
+    SDL_Surface *damage_img;
+    SDL_Surface *damage_top_img;
+    SDL_Surface *game_over_img;
+
+    struct score_t score;
+    struct invaders_t invaders;
+    struct player_t player;
+    struct bullet_t bullets[P_BULLETS];
+    struct bullet_t e_bullets[E_BULLETS];
+    unsigned int pause_len;
+    Uint32 pause_time;
+    enum state_t state;
+    Uint32 title_time;
 	/* Initialize SDL’s video system and check for errors */
 	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
 
@@ -998,13 +968,13 @@ int main() {
 
 			draw_hud();
 			draw_player();
-			draw_invaders();
+			draw_invaders(invaders, invadersmap, screen);
 			draw_bullets(bullets, P_BULLETS);
 			draw_bullets(e_bullets, E_BULLETS);
 			ennemy_hit_collision();
 			player_hit_collision();
 			ennemy_player_collision();
-			move_invaders(invaders.speed);
+			move_invaders(invaders.speed, invaders);
 			move_bullets(bullets, P_BULLETS, -30);
 			move_bullets(e_bullets, E_BULLETS, 15);
 			calculate_level();
@@ -1016,7 +986,7 @@ int main() {
 			
 			draw_hud();
 			draw_player();
-			draw_invaders();
+			draw_invaders(invaders, invadersmap, screen);
 			draw_bullets(bullets, P_BULLETS);
 			draw_bullets(e_bullets, E_BULLETS);
 			draw_game_over();
@@ -1025,7 +995,7 @@ int main() {
 			
 			draw_hud();
 			draw_player();
-			draw_invaders();
+			draw_invaders(invaders, invadersmap, screen);
 			draw_bullets(bullets, P_BULLETS);
 			draw_bullets(e_bullets, E_BULLETS);
 			pause_game();
