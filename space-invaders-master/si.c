@@ -6,19 +6,22 @@
 int load_image(char filename[], SDL_Surface **surface, enum ck_t colour_key);
 
 //Initialize the score structure and game state
-void init_score(struct score_t score) {
+struct score_t init_score(struct score_t score) {
 	score.shots = 0;
 	score.points = 0;
 	score.level = 1;
+	return score;
 }
 
 //Initialize the player starting position and dimensions
-void init_player(struct player_t player) {
+struct player_t init_player(struct player_t player) {
 	player.hitbox.x = (WIDTH / 2) - (P_WIDTH / 2);
 	player.hitbox.y = HEIGHT - (P_HEIGHT + 10);
 	player.hitbox.w = P_WIDTH;
 	player.hitbox.h = P_HEIGHT;
 	player.lives = 3;
+
+	return player;
 }
 
 //Initialize the player bullets dimensions
@@ -34,6 +37,7 @@ void init_bullets(struct bullet_t b[], int max) {
 		b[i].hitbox.w = B_WIDTH;
 		b[i].hitbox.h = B_HEIGHT;
 	}
+
 }
 
 //Draw the background
@@ -103,10 +107,11 @@ void draw_string(char s[], int x, int y, SDL_Surface *cmap, SDL_Surface *screen)
 }
 
 //Set amount of time to pause game for
-void pause_for(unsigned int len, enum state_t state, Uint32 pause_time, unsigned int pause_len) {
+enum state_t pause_for(unsigned int len, enum state_t state, Uint32 pause_time, unsigned int pause_len) {
 	state = pause;
 	pause_time = SDL_GetTicks();
 	pause_len = len;
+	return state;
 }
 //Draw the HUD
 void draw_hud(SDL_Surface *screen, struct score_t score, struct player_t player, SDL_Surface *cmap) {
@@ -253,7 +258,7 @@ int move_bullets(struct bullet_t b[], int max, int speed) {
 }
 
 //Move player left or right
-void move_player(enum direction_t direction, struct player_t player) {
+struct player_t move_player(enum direction_t direction, struct player_t player) {
 
 	if (direction == left) {
 			
@@ -269,6 +274,7 @@ void move_player(enum direction_t direction, struct player_t player) {
 			player.hitbox.x += 10;
 		}
 	}
+	return player;
 }
 
 //Detect any collision between any two non rotated rectangles
@@ -298,7 +304,7 @@ int collision(SDL_Rect a, SDL_Rect b) {
 }
 
 //Look for collisions based on player bullet and invader rectangles
-void ennemy_hit_collision(struct invaders_t invaders, struct bullet_t *bullets, struct score_t score) {
+struct invaders_t ennemy_hit_collision(struct invaders_t invaders, struct bullet_t *bullets, struct score_t score) {
 
 	int i,j,k,c;
 	
@@ -328,9 +334,10 @@ void ennemy_hit_collision(struct invaders_t invaders, struct bullet_t *bullets, 
 			}
 		}
 	}
+	return invaders;
 }
 
-void init_invaders(struct invaders_t invaders) {
+struct invaders_t init_invaders(struct invaders_t invaders) {
 
 	invaders.direction = right;
 	invaders.speed = 1;
@@ -375,6 +382,7 @@ void init_invaders(struct invaders_t invaders) {
 		x = 0; //reset line
 		y += E_HEIGHT + 20;
 	}
+	return invaders;
 }
 
 void draw_invaders(struct invaders_t invaders, SDL_Surface *invadersmap, SDL_Surface *screen) {
@@ -445,7 +453,7 @@ void draw_invaders(struct invaders_t invaders, SDL_Surface *invadersmap, SDL_Sur
 	}
 }
 
-void set_invaders_speed(struct invaders_t invaders) {
+struct invaders_t set_invaders_speed(struct invaders_t invaders) {
 
 	switch (invaders.killed) {
 
@@ -463,19 +471,14 @@ void set_invaders_speed(struct invaders_t invaders) {
 
 		case 30:
 
-			invaders.speed = 8;
-			invaders.state_speed = 200;
-			break;
-
-		case 40:
-
-			invaders.speed = 16;
-			invaders.state_speed = 0;
+			invaders.speed = 6;
+			invaders.state_speed = 400;
 			break;
 	}
+	return invaders;
 }
 
-void move_invaders_down(struct invaders_t invaders) {
+struct invaders_t move_invaders_down(struct invaders_t invaders) {
 
 	int i,j;
 
@@ -486,11 +489,13 @@ void move_invaders_down(struct invaders_t invaders) {
 			invaders.ennemy[i][j].hitbox.y += 15;
 		}
 	}
+
+	return invaders;
 }
 
-int move_invaders(int speed, struct invaders_t invaders) {
+struct invaders_t move_invaders(int speed, struct invaders_t invaders) {
 
-	set_invaders_speed(invaders);
+	invaders = set_invaders_speed(invaders);
 
 	int i,j;
 
@@ -507,8 +512,8 @@ int move_invaders(int speed, struct invaders_t invaders) {
 						if (invaders.ennemy[j][i].hitbox.x <= 0) {
 
 							invaders.direction = right;
-							move_invaders_down(invaders);
-							return 0;
+							invaders = move_invaders_down(invaders);
+							return invaders;
 						}
 
 						if (invaders.state_time + invaders.state_speed < SDL_GetTicks()) {
@@ -544,8 +549,8 @@ int move_invaders(int speed, struct invaders_t invaders) {
 						if (invaders.ennemy[j][i].hitbox.x + E_WIDTH >= WIDTH) {
 
 							invaders.direction = left;
-							move_invaders_down(invaders);
-							return 0;
+							invaders = move_invaders_down(invaders);
+							return invaders;
 						}
 
 						if (invaders.state_time + invaders.state_speed < SDL_GetTicks()) {
@@ -574,11 +579,11 @@ int move_invaders(int speed, struct invaders_t invaders) {
 
 	}
 
-	return 0;
+	return invaders;
 }
 
 //Look for collisions based on ennemy bullet and player rectangles
-void player_hit_collision(struct bullet_t *e_bullets, struct player_t player, enum state_t state, Uint32 pause_time, unsigned int pause_len) {
+struct player_t player_hit_collision(struct bullet_t *e_bullets, struct player_t player, enum state_t state, Uint32 pause_time, unsigned int pause_len) {
 
 	int i,c;
 
@@ -593,11 +598,12 @@ void player_hit_collision(struct bullet_t *e_bullets, struct player_t player, en
 				if (player.lives >= 0) {
 				
 					player.lives--;
-					pause_for(500, state, pause_time, pause_len);
+					state = pause_for(500, state, pause_time, pause_len);
 				}
 			}
 		}
 	}
+	return player;
 }
 
 //Look for collisions based on invader and player rectangles
@@ -616,7 +622,7 @@ int ennemy_player_collision(struct invaders_t invaders, struct player_t player, 
 				if (c == 1) {
 				
 					player.lives--;
-					pause_for(500, state, pause_time, pause_len);
+					state = pause_for(500, state, pause_time, pause_len);
 					init_invaders(invaders);
 					return 1;
 				}
@@ -628,10 +634,11 @@ int ennemy_player_collision(struct invaders_t invaders, struct player_t player, 
 }
 
 //Determine for game over event
-void game_over_ai(struct player_t player, enum state_t state) {
+enum state_t game_over_ai(struct player_t player, enum state_t state) {
 	if (player.lives < 0) {
 		state = game_over;
 	}
+	return state;
 }
 
 //Shoot bullet/s from player
@@ -653,7 +660,7 @@ void calculate_level(struct invaders_t invaders, struct score_t score, enum stat
 	if (invaders.killed != 0 && invaders.killed % 40 == 0) {
 		score.level++;
 		init_invaders(invaders);
-		pause_for(500, state, pause_time, pause_len);
+		state = pause_for(500, state, pause_time, pause_len);
 	}
 }
 
@@ -725,22 +732,18 @@ int load_image(char filename[], SDL_Surface **surface, enum ck_t colour_key) {
 
 	return 0;
 }
-
-//Main program
-int main() {
-    SDL_Surface *screen;
-    SDL_Surface *title_screen;
-    SDL_Surface *cmap;
-    SDL_Surface *invadersmap;
-    SDL_Surface *player_img;
-    SDL_Surface *saucer_img;
-    SDL_Surface *base_img[4];
-    SDL_Surface *damage_img;
-    SDL_Surface *damage_top_img;
-    SDL_Surface *game_over_img;
+    static SDL_Surface *screen;
+    static SDL_Surface *title_screen;
+    static SDL_Surface *cmap;
+    static SDL_Surface *invadersmap;
+    static SDL_Surface *player_img;
+    static SDL_Surface *saucer_img;
+    static SDL_Surface *damage_img;
+    static SDL_Surface *damage_top_img;
+    static SDL_Surface *game_over_img;
     struct score_t score;
     struct invaders_t invaders;
-    struct player_t player;
+    static struct player_t player;
     struct bullet_t bullets[P_BULLETS];
     struct bullet_t e_bullets[E_BULLETS];
     unsigned int pause_len;
@@ -748,10 +751,10 @@ int main() {
     enum state_t state;
     Uint32 title_time;
 
-
+//Main program
+int main() {
 	/* Initialize SDL’s video system and check for errors */
 	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
-
 		printf("Unable to initialize SDL: %s\n", SDL_GetError());
 		return 1;
 	}
@@ -786,9 +789,9 @@ int main() {
 	int quit = 0;
 	SDL_Event event;
 
-	init_score(score);
-	init_invaders(invaders);
-	init_player(player);
+	score = init_score(score);
+	invaders = init_invaders(invaders);
+	player = init_player(player);
 	init_bullets(bullets, P_BULLETS);
 	init_bullets(e_bullets, E_BULLETS);
 	state = menu;
@@ -826,9 +829,9 @@ int main() {
 
 							} else if (state == game_over) {
 
-								init_invaders(invaders);
-								init_score(score);
-								init_player(player);
+								invaders = init_invaders(invaders);
+								score = init_score(score);
+								player = init_player(player);
 								state = game;
 							}
 						break;
@@ -859,28 +862,27 @@ int main() {
 		} else if (state == game) {
 			if (keystate[SDLK_LEFT]) {
 
-				move_player(left, player);
+				player = move_player(left, player);
 			}
 
 			if (keystate[SDLK_RIGHT]) {
-
-				move_player(right, player);
+				player = move_player(right, player);
 			}
-//			draw_hud(screen, score, player, cmap);
+			draw_hud(screen, score, player, cmap);
 			draw_player(player_img, screen, player);
-//			draw_invaders(invaders, invadersmap, screen);
-//			draw_bullets(bullets, P_BULLETS, screen);
-//			draw_bullets(e_bullets, E_BULLETS, screen);
-//			ennemy_hit_collision(invaders, bullets, score);
-//			player_hit_collision(e_bullets, player, state, pause_time, pause_len);
-//			ennemy_player_collision(invaders, player, state, pause_time, pause_len);
-//			move_invaders(invaders.speed, invaders);
-//			move_bullets(bullets, P_BULLETS, -30);
-//			move_bullets(e_bullets, E_BULLETS, 15);
-//			calculate_level(invaders, score, state, pause_time, pause_len);
-//			ennemy_ai(invaders, player, e_bullets);
-//			game_over_ai(player, state);
-//			pause_game(pause_time, pause_len, state);
+			draw_invaders(invaders, invadersmap, screen);
+			draw_bullets(bullets, P_BULLETS, screen);
+			draw_bullets(e_bullets, E_BULLETS, screen);
+			invaders = ennemy_hit_collision(invaders, bullets, score);
+			player = player_hit_collision(e_bullets, player, state, pause_time, pause_len);
+			ennemy_player_collision(invaders, player, state, pause_time, pause_len);
+			invaders = move_invaders(invaders.speed, invaders);
+			move_bullets(bullets, P_BULLETS, -30);
+			move_bullets(e_bullets, E_BULLETS, 15);
+			calculate_level(invaders, score, state, pause_time, pause_len);
+			ennemy_ai(invaders, player, e_bullets);
+			state = game_over_ai(player, state);
+			pause_game(pause_time, pause_len, state);
 		
 		} else if (state == game_over) {
 			
@@ -906,7 +908,7 @@ int main() {
 
 		next_game_tick += 1000 / 30;
 		sleep = next_game_tick - SDL_GetTicks();
-	
+
 		if( sleep >= 0 ) {
             SDL_Delay(sleep);
         }
