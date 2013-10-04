@@ -3,7 +3,7 @@
 
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 600
-#define WIDTH 600
+#define WIDTH 800
 #define HEIGHT 600
 #define E_WIDTH 30
 #define E_HEIGHT 30

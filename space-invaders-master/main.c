@@ -92,47 +92,32 @@ enum state_t pause_for(unsigned int len, enum state_t state, Uint32 pause_time, 
 
 void draw_hud(SDL_Surface *screen, struct score_t score, struct player_t player, SDL_Surface *cmap) {
 	SDL_Rect r;
-	r.x = WIDTH;
+	r.x = 0;
 	r.y = 0;
-	r.w = SCREEN_WIDTH - WIDTH;
-	r.h = SCREEN_HEIGHT;
+	r.w = 800;
+	r.h = 20;
 	SDL_FillRect(screen, &r, SDL_MapRGB(screen->format, 41, 41, 41));
 
 	char score_label[] = "Score";
-	draw_string(score_label, WIDTH, 0, cmap, screen);
+	draw_string(score_label, 50, 0, cmap, screen);
 	
 	char score_num[10];
 	snprintf(score_num, 10, "%d", score.points);
-	draw_string(score_num, WIDTH, 20, cmap, screen);
+	draw_string(score_num, 150, 0, cmap, screen);
 
 	char level[] = "Level";
-	draw_string(level, WIDTH, 60, cmap, screen);
+	draw_string(level, 300, 0, cmap, screen);
 	
 	char level_num[2];
 	snprintf(level_num, 2, "%d", score.level);
-	draw_string(level_num, WIDTH, 80, cmap, screen);
+	draw_string(level_num, 400, 0, cmap, screen);
 	
 	char lives[] = "Lives";
-	draw_string(lives, WIDTH, 120, cmap, screen);
+	draw_string(lives, 550, 0, cmap, screen);
 	
 	char lives_num[2];
 	snprintf(lives_num, 2, "%d", player.lives);
-	draw_string(lives_num, WIDTH, 140, cmap, screen);
-
-	char credits[] = "Made by";
-    draw_string(credits, WIDTH, 480, cmap, screen);
-
-	char name1[] = "David";
-	draw_string(name1, WIDTH, 500, cmap, screen);
-
-	char name2[] = "Eddy";
-    draw_string(name2, WIDTH, 520, cmap, screen);
-
-	char name3[] = "Kenny";
-	draw_string(name3, WIDTH, 540, cmap, screen);
-
-	char name4[] = "Ophelie";
-    draw_string(name4, WIDTH, 560, cmap, screen);
+	draw_string(lives_num, 650, 0, cmap, screen);
 }
 
 void draw_title_screen(SDL_Surface *title_screen, SDL_Surface *screen) {
