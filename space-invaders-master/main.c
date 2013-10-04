@@ -464,7 +464,7 @@ struct player_t player_hit_collision(struct bullet_t *e_bullets, struct player_t
 }
 
 //Look for collisions based on invader and player rectangles
-int ennemy_player_collision(struct invaders_t invaders, struct player_t player, enum state_t state, Uint32 pause_time, unsigned int pause_len) {
+struct invaders_t ennemy_player_collision(struct invaders_t invaders, struct player_t player, enum state_t state, Uint32 pause_time, unsigned int pause_len) {
 
 	int i,j,c;
 
@@ -480,14 +480,14 @@ int ennemy_player_collision(struct invaders_t invaders, struct player_t player, 
 				
 					player.lives--;
 					state = pause_for(500, state, pause_time, pause_len);
-					init_invaders(invaders);
-					return 1;
+					invaders = init_invaders(invaders);
+					return invaders;
 				}
 			}
 		}
 	}
 
-	return 0;
+	return invaders;
 }
 
 //Determine for game over event
@@ -512,13 +512,13 @@ void player_shoot(struct bullet_t *bullets, struct score_t score, struct player_
 	}
 }
 
-struct score_t calculate_level(struct invaders_t invaders, struct score_t score, enum state_t state, Uint32 pause_time, unsigned int pause_len) {
-	if (invaders.killed != 0 && invaders.killed % 40 == 0) {
-		score.level++;
-		init_invaders(invaders);
-		state = pause_for(500, state, pause_time, pause_len);
+struct invaders_t calculate_level(struct invaders_t invaders, struct score_t score, enum state_t state, Uint32 pause_time, unsigned int pause_len) {
+	if (invaders.killed != 0 && invaders.killed % 5 == 0) {
+		invaders.level++;
+		invaders = init_invaders(invaders);
+		invaders.state = pause_for(500, state, pause_time, pause_len);
 	}
-	return score;
+	return invaders;
 }
 
 //Determine when invaders should shoot
@@ -721,7 +721,9 @@ int main() {
 			invaders = move_invaders(invaders.speed, invaders);
 			move_bullets(bullets, P_BULLETS, -30);
 			move_bullets(e_bullets, E_BULLETS, 15);
-			score = calculate_level(invaders, score, state, pause_time, pause_len);
+			invaders = calculate_level(invaders, score, state, pause_time, pause_len);
+			score.level = invaders.level;
+			state = invaders.state;
 			ennemy_ai(invaders, player, e_bullets);
 			state = game_over_ai(player, state);
 			pause_game(pause_time, pause_len, state);
