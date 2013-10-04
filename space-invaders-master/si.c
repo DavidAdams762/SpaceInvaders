@@ -52,25 +52,22 @@ int draw_char(char c, int x, int y, SDL_Surface *cmap, SDL_Surface *screen) {
 	SDL_Rect src;
 	SDL_Rect dest;
 	int i,j;
-	char *map[] = {"ABCDEFGHIJKLMNOPQRSTUVWXYZ",
-			"abcdefghijklmnopqrstuvwxyz",
-			"!@#$%^&*()_+{}|:\"<>?,.;'-=",
-			"0123456789"};
+	char *map[] = {"ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz", "0123456789"};
 	src.x = 0;
 	src.y = 0;
-	src.w = 20;
+	src.w = 17;
 	src.h = 20;
 	dest.x = x;
 	dest.y = y;
-	dest.w = 20;
+	dest.w = 17;
 	dest.h = 20;
-	for (i = 0; i < 4; i++) {
+	for (i = 0; i < 3; i++) {
 		for(j = 0; j < strlen(map[i]); j++) {
 			if (c == map[i][j]) {
 				SDL_BlitSurface(cmap, &src, screen, &dest);
 				return 0;
 			}
-			src.x += 20;
+			src.x += 17;
 		}
 		src.y += 20;//move down one line on the image file
 		src.x = 0; //reset to start of line
@@ -79,21 +76,10 @@ int draw_char(char c, int x, int y, SDL_Surface *cmap, SDL_Surface *screen) {
 }
 
 void draw_string(char s[], int x, int y, SDL_Surface *cmap, SDL_Surface *screen) {
-    /*TTF_Font *police = NULL;
-	SDL_Color white = {255, 255, 255};
-	TTF_Init();
-	SDL_Surface *texte = NULL;
-	SDL_Rect dest;
-	police = TTF_OpenFont("space_invader.ttf", 65);
-	texte = TTF_RenderText_Blended(police, s, white);
-	dest.x = x;
-	dest.y = y;
-
-	SDL_BlitSurface(texte, NULL, screen, &dest); *//* Blit du texte */
 	int i;
 	for (i = 0; i < strlen(s); i++) {
 		draw_char(s[i], x, y, cmap, screen);
-		x += 20;
+		x += 17;
 	}
 }
 
