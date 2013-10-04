@@ -513,10 +513,10 @@ void player_shoot(struct bullet_t *bullets, struct score_t score, struct player_
 }
 
 struct score_t calculate_level(struct invaders_t invaders, struct score_t score, enum state_t state, Uint32 pause_time, unsigned int pause_len) {
-	if (invaders.killed != 0 && invaders.killed % 5 == 0) {
+	if (invaders.killed != 0 && invaders.killed % 40 == 0) {
 		score.level++;
-//		invaders = init_invaders(invaders);
-//		state = pause_for(500, state, pause_time, pause_len);
+		invaders = init_invaders(invaders);
+		state = pause_for(500, state, pause_time, pause_len);
 	}
 	return score;
 }
@@ -604,7 +604,6 @@ int load_image(char filename[], SDL_Surface **surface, enum ck_t colour_key) {
     struct bullet_t bullets[P_BULLETS];
     struct bullet_t e_bullets[E_BULLETS];
     unsigned int pause_len;
-    unsigned int level_old;
     Uint32 pause_time;
     enum state_t state;
     Uint32 title_time;
@@ -722,12 +721,7 @@ int main() {
 			invaders = move_invaders(invaders.speed, invaders);
 			move_bullets(bullets, P_BULLETS, -30);
 			move_bullets(e_bullets, E_BULLETS, 15);
-			level_old = score.level;
 			score = calculate_level(invaders, score, state, pause_time, pause_len);
-			if (level_old < score.level) {
-			    invaders = init_invaders(invaders);
-                state = pause_for(500, state, pause_time, pause_len);
-			}
 			ennemy_ai(invaders, player, e_bullets);
 			state = game_over_ai(player, state);
 			pause_game(pause_time, pause_len, state);
