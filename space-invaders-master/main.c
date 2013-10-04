@@ -10,6 +10,7 @@ struct score_t init_score(struct score_t score) {
 	score.shots = 0;
 	score.points = 0;
 	score.level = 1;
+	score.passed = 0;
 	return score;
 }
 
@@ -515,7 +516,7 @@ void player_shoot(struct bullet_t *bullets, struct score_t score, struct player_
 struct score_t calculate_level(struct invaders_t invaders, struct score_t score, enum state_t state, Uint32 pause_time, unsigned int pause_len) {
 	if (invaders.killed != 0 && invaders.killed % 40 == 0) {
 		score.level++;
-		invaders = init_invaders(invaders);
+		score.passed = 1;
 		state = pause_for(500, state, pause_time, pause_len);
 	}
 	return score;
@@ -722,6 +723,10 @@ int main() {
 			move_bullets(bullets, P_BULLETS, -30);
 			move_bullets(e_bullets, E_BULLETS, 15);
 			score = calculate_level(invaders, score, state, pause_time, pause_len);
+			if (score.passed > 0) {
+                invaders = init_invaders(invaders);
+                score.passed = 0;
+			}
 			ennemy_ai(invaders, player, e_bullets);
 			state = game_over_ai(player, state);
 			pause_game(pause_time, pause_len, state);

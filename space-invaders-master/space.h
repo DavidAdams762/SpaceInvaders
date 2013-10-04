@@ -23,6 +23,7 @@ struct score_t {
 	unsigned int shots;
 	unsigned int points;
 	unsigned int level;
+	int passed;
 };
 
 struct ennemy_t {
