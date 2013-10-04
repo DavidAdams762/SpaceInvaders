@@ -1,28 +1,23 @@
-TARGET=spaceinvaders
+NAME=spaceinvaders
 
-CXX=clang
-CXXFLAGS=-Wno-unknown-pragmas
-CPPFLAGS=-g
-LDFLAGS=
+CLANG=clang
+CFLAGS=-Wno-unknown-pragmas -g
 LDLIBS=-lSDL_image -lSDL_gfx
 
 SRC=$(wildcard *.c)
 INCLUDE=$(wildcard *.h)
 OBJ=$(SRC:%.c=%.o)
 
-all: $(TARGET)
+all: $(NAME)
 
-$(TARGET): $(OBJ)
-	$(CXX) $(LDFLAGS) -o $(TARGET) $(OBJ) $(LDLIBS) `sdl-config --cflags --libs`
+$(NAME): $(OBJ)
+	$(CLANG) -o $(NAME) $(OBJ) $(LDLIBS) `sdl-config --cflags --libs`
 
 $(SRC):
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $< -I$(INCLUDE)
+	$(CLANG) $(CFLAGS) -c $< -I$(INCLUDE)
 
 clean:
 	rm -rf *.o $(TARGET)
-
-install:
-	sudo cp $(TARGET) /usr/bin/$(TARGET)
 
 fclean:		clean
 		$(RM) $(TARGET)
