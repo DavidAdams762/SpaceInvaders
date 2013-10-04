@@ -41,8 +41,6 @@ struct invaders_t {
 	int state_speed;
 	int score;
 	Uint32 state_time;
-	unsigned int level;
-	enum state_t state;
 };
 
 struct player_t {
