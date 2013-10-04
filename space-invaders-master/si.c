@@ -706,7 +706,7 @@ int main() {
 			char s[] = "Press SPACEBAR to start";
 
 			draw_title_screen(title_screen, screen);
-			draw_string(s, (SCREEN_WIDTH / 2) - (strlen(s) * 10), 500, cmap, screen);
+			draw_string(s, (SCREEN_WIDTH / 4), 400, cmap, screen);
 
 		} else if (state == game) {
 			if (keystate[SDLK_LEFT]) {
