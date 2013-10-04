@@ -628,11 +628,11 @@ int main() {
 		return 1;
 	}
 
-    title_screen = IMG_Load("title_screen.png");
-    cmap = IMG_Load("cmap.png");
-    invadersmap = IMG_Load("invaders.png");
-    player_img = IMG_Load("player_ship.png");
-    game_over_img = IMG_Load("gameover.png");
+    title_screen = IMG_Load("images/title_screen.png");
+    cmap = IMG_Load("images/cmap.png");
+    invadersmap = IMG_Load("images/invaders.png");
+    player_img = IMG_Load("images/player_ship.png");
+    game_over_img = IMG_Load("images/gameover.png");
 	Uint32 next_game_tick = SDL_GetTicks();
 	int sleep = 0;
 	Uint8 *keystate = 0;
