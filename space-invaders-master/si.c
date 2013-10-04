@@ -628,13 +628,6 @@ int main() {
 		return 1;
 	}
 
-	//load images
-//	load_image("titlescreen.bmp", &title_screen, magenta);
-//	load_image("cmap.bmp", &cmap, magenta);
-//	load_image("invaders.bmp", &invadersmap, magenta);
-//	load_image("player.bmp", &player_img, magenta);
-//	load_image("gameover.bmp", &game_over_img, magenta);
-
     title_screen = IMG_Load("title_screen.png");
     cmap = IMG_Load("cmap.png");
     invadersmap = IMG_Load("invaders.png");
