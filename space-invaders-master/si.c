@@ -1,11 +1,12 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include "SDL/SDL.h"
+#include <SDL/SDL.h>
+#include <SDL/SDL_image.h>
+#include <SDL/SDL_ttf.h>
 #include "space.h"
 
 int load_image(char filename[], SDL_Surface **surface, enum ck_t colour_key);
 
-//Initialize the score structure and game state
 struct score_t init_score(struct score_t score) {
 	score.shots = 0;
 	score.points = 0;
@@ -13,7 +14,11 @@ struct score_t init_score(struct score_t score) {
 	return score;
 }
 
-//Initialize the player starting position and dimensions
+struct score_t update_score(struct invaders_t invaders, struct score_t score) {
+    score.points = invaders.score;
+    return score;
+}
+
 struct player_t init_player(struct player_t player) {
 	player.hitbox.x = (WIDTH / 2) - (P_WIDTH / 2);
 	player.hitbox.y = HEIGHT - (P_HEIGHT + 10);
@@ -24,38 +29,26 @@ struct player_t init_player(struct player_t player) {
 	return player;
 }
 
-//Initialize the player bullets dimensions
 void init_bullets(struct bullet_t b[], int max) {
-
-	int i;
-
-	for (i = 0; i < max; i++) {
-	
+	for (int i = 0; i < max; i++) {
 		b[i].alive = 0;
 		b[i].hitbox.x = 0;
 		b[i].hitbox.y = 0;
 		b[i].hitbox.w = B_WIDTH;
 		b[i].hitbox.h = B_HEIGHT;
 	}
-
 }
 
-//Draw the background
 void draw_background (SDL_Surface *screen) {
-
 	SDL_Rect src;
-
 	src.x = 0;
 	src.y = 0;
 	src.w = screen->w;
 	src.h = screen->h;
-	
-	SDL_FillRect(screen, &src, 0);
+	SDL_FillRect(screen, &src, SDL_MapRGB(screen->format, 0, 0, 0));
 }
 
-//Draw a char
 int draw_char(char c, int x, int y, SDL_Surface *cmap, SDL_Surface *screen) {
-
 	SDL_Rect src;
 	SDL_Rect dest;
 	int i,j;
@@ -63,68 +56,62 @@ int draw_char(char c, int x, int y, SDL_Surface *cmap, SDL_Surface *screen) {
 			"abcdefghijklmnopqrstuvwxyz",
 			"!@#$%^&*()_+{}|:\"<>?,.;'-=",
 			"0123456789"};
-
 	src.x = 0;
 	src.y = 0;
 	src.w = 20;
 	src.h = 20;
-
 	dest.x = x;
 	dest.y = y;
 	dest.w = 20;
 	dest.h = 20;
-
 	for (i = 0; i < 4; i++) {
-
 		for(j = 0; j < strlen(map[i]); j++) {
-
 			if (c == map[i][j]) {
-
 				SDL_BlitSurface(cmap, &src, screen, &dest);
 				return 0;
 			}
-
 			src.x += 20;
 		}
-
 		src.y += 20;//move down one line on the image file
 		src.x = 0; //reset to start of line
 	}
-
 	return 0;
 }
 
-//Draw a string of chars
 void draw_string(char s[], int x, int y, SDL_Surface *cmap, SDL_Surface *screen) {
+    /*TTF_Font *police = NULL;
+	SDL_Color white = {255, 255, 255};
+	TTF_Init();
+	SDL_Surface *texte = NULL;
+	SDL_Rect dest;
+	police = TTF_OpenFont("space_invader.ttf", 65);
+	texte = TTF_RenderText_Blended(police, s, white);
+	dest.x = x;
+	dest.y = y;
 
+	SDL_BlitSurface(texte, NULL, screen, &dest); *//* Blit du texte */
 	int i;
-
 	for (i = 0; i < strlen(s); i++) {
-
 		draw_char(s[i], x, y, cmap, screen);
 		x += 20;
 	}
 }
 
-//Set amount of time to pause game for
 enum state_t pause_for(unsigned int len, enum state_t state, Uint32 pause_time, unsigned int pause_len) {
 	state = pause;
 	pause_time = SDL_GetTicks();
 	pause_len = len;
 	return state;
 }
-//Draw the HUD
+
 void draw_hud(SDL_Surface *screen, struct score_t score, struct player_t player, SDL_Surface *cmap) {
-	
 	SDL_Rect r;
-	
 	r.x = WIDTH;
 	r.y = 0;
 	r.w = SCREEN_WIDTH - WIDTH;
 	r.h = SCREEN_HEIGHT;
+	SDL_FillRect(screen, &r, SDL_MapRGB(screen->format, 41, 41, 41));
 
-	SDL_FillRect(screen, &r, 41);
-	
 	char score_label[] = "Score";
 	draw_string(score_label, WIDTH, 0, cmap, screen);
 	
@@ -162,7 +149,6 @@ void draw_hud(SDL_Surface *screen, struct score_t score, struct player_t player,
     draw_string(name4, WIDTH, 560, cmap, screen);
 }
 
-//Draw the title screen
 void draw_title_screen(SDL_Surface *title_screen, SDL_Surface *screen) {
 	
 	SDL_Rect src;
@@ -174,14 +160,13 @@ void draw_title_screen(SDL_Surface *title_screen, SDL_Surface *screen) {
 	src.h = title_screen->h;
 
 	dest.x = (SCREEN_WIDTH / 2) - (title_screen->w / 2);
-	dest.y = 0;
+	dest.y = (HEIGHT / 3) - (title_screen->h / 2);
 	dest.w = title_screen->w;
 	dest.h = title_screen->h;
 	
 	SDL_BlitSurface(title_screen, &src, screen, &dest);
 }
 
-//Draw the player
 void draw_player(SDL_Surface *player_img, SDL_Surface *screen, struct player_t player) {
 
 	SDL_Rect src;
@@ -194,27 +179,15 @@ void draw_player(SDL_Surface *player_img, SDL_Surface *screen, struct player_t p
 	SDL_BlitSurface(player_img, &src, screen, &player.hitbox);
 }
 
-//Draw both the ennemy and the players bullets if there alive
 void draw_bullets(struct bullet_t b[], int max, SDL_Surface *screen) {
-
-	//Uint8 c = SDL_MapRGB(screen->format, 255, 255, 255);
-	int i;
-
-
-	for (i = 0; i < max; i++) {
-	
+	for (int i = 0; i < max; i++) {
 		if (b[i].alive == 1) {
-		
-			SDL_FillRect(screen, &b[i].hitbox, 255);
+			SDL_FillRect(screen, &b[i].hitbox, SDL_MapRGB(screen->format, 255, 255, 255));
 		}
 	}
 }
 
-
-
-//Draw Game Over message
 void draw_game_over(SDL_Surface *game_over_img, SDL_Surface *screen) {
-		
 	SDL_Rect src;
 	SDL_Rect dest;
 
@@ -231,103 +204,66 @@ void draw_game_over(SDL_Surface *game_over_img, SDL_Surface *screen) {
 	SDL_BlitSurface(game_over_img, &src, screen, &dest);
 }
 
-//Move positions of both ennemy and player bullets on screen
 int move_bullets(struct bullet_t b[], int max, int speed) {
-	
-	int i;
-
-	for(i = 0; i < max; i++) {
-	
+	for (int i = 0; i < max; i++) {
 		if (b[i].alive == 1) {
-			
 			b[i].hitbox.y += speed;
-			
 			if (b[i].hitbox.y <= 0) {
-		
 				b[i].alive = 0;	
 			}
-			
 			if (b[i].hitbox.y + b[i].hitbox.h >= HEIGHT) {
-		
 				b[i].alive = 0;	
 			}
 		}
 	}
-
 	return 0;
 }
 
-//Move player left or right
 struct player_t move_player(enum direction_t direction, struct player_t player) {
-
 	if (direction == left) {
-			
 		if (player.hitbox.x > 0) {
-			
 			player.hitbox.x -= 10;
 		}
-
-	} else if (direction == right) {
-
+	}
+	else if (direction == right) {
 		if (player.hitbox.x + player.hitbox.w < WIDTH){
-
 			player.hitbox.x += 10;
 		}
 	}
 	return player;
 }
 
-//Detect any collision between any two non rotated rectangles
 int collision(SDL_Rect a, SDL_Rect b) {
-
 	if (a.y + a.h < b.y) {
-	
 		return 0;
 	}
-				
 	if (a.y > b.y + b.h) {
-					
 		return 0;
 	}
-				
 	if (a.x > b.x + b.w) {
-					
 		return 0;
 	}
-			
 	if (a.x + a.w < b.x) {
-					
 		return 0;
 	}
-
 	return 1;
 }
 
-//Look for collisions based on player bullet and invader rectangles
 struct invaders_t ennemy_hit_collision(struct invaders_t invaders, struct bullet_t *bullets, struct score_t score) {
-
-	int i,j,k,c;
-	
-	for (i = 0; i < 5; i++) {
-		
-		for (j = 0; j < 10; j++) {
-			
+	int c;
+	for (int i = 0; i < 5; i++) {
+		for (int j = 0; j < 10; j++) {
 			if (invaders.ennemy[i][j].alive == 1) {
-			
-				for (k = 0; k < P_BULLETS; k++) {
-			
+				for (int k = 0; k < P_BULLETS; k++) {
 					if (bullets[k].alive == 1) {
-						
 						c = collision(bullets[k].hitbox, invaders.ennemy[i][j].hitbox);
-				
 						if (c == 1) {
-				
 							invaders.ennemy[i][j].alive = 0;
 							bullets[k].alive = 0;
 							bullets[k].hitbox.x = 0;
 							bullets[k].hitbox.y = 0;
 							invaders.killed++;
-							score.points += invaders.ennemy[i][j].points;
+							invaders.score += invaders.ennemy[i][j].points;
 						}
 					}
 				}
@@ -338,22 +274,19 @@ struct invaders_t ennemy_hit_collision(struct invaders_t invaders, struct bullet
 }
 
 struct invaders_t init_invaders(struct invaders_t invaders) {
-
 	invaders.direction = right;
 	invaders.speed = 1;
 	invaders.state = 0;
 	invaders.killed = 0;
+	invaders.score = 0;
 	invaders.state_speed = 1000;
 	invaders.state_time = SDL_GetTicks();
 
-	int i,j;
 	int x = 0;
 	int y = 30;
 
-	for (i = 0; i < 5; i++) {
-
-		for (j = 0; j < 8; j++) {
-
+	for (int i = 0; i < 5; i++) {
+		for (int j = 0; j < 8; j++) {
 			invaders.ennemy[i][j].alive = 1;
 			invaders.ennemy[i][j].hitbox.x = x;
 			invaders.ennemy[i][j].hitbox.y = y;
@@ -363,85 +296,70 @@ struct invaders_t init_invaders(struct invaders_t invaders) {
 			x += E_WIDTH + 20; // gap size
 
 			if (i == 0) {
-
 				invaders.ennemy[i][j].colour = purple;
 				invaders.ennemy[i][j].points = 30;
 
-			} else if (i >= 1 && i < 3) {
-
+			}
+			else if (i >= 1 && i < 3) {
 				invaders.ennemy[i][j].colour = green;
 				invaders.ennemy[i][j].points = 20;
 
-			} else {
-
+			}
+			else {
 				invaders.ennemy[i][j].colour = red;
 				invaders.ennemy[i][j].points = 10;
 			}
 		}
 
-		x = 0; //reset line
+		x = 0;
 		y += E_HEIGHT + 20;
 	}
 	return invaders;
 }
 
 void draw_invaders(struct invaders_t invaders, SDL_Surface *invadersmap, SDL_Surface *screen) {
-
 	SDL_Rect src, dest;
-	int i,j;
 
 	src.w = E_WIDTH;
 	src.h = E_HEIGHT;
 
-	for (i = 0; i < 5; i++) {
-
-		for (j = 0; j < 8; j++) {
-
+	for (int i = 0; i < 5; i++) {
+		for (int j = 0; j < 8; j++) {
 			if (invaders.ennemy[i][j].alive == 1) {
-
 				//purple
 				if(i == 0) {
-
 					if (invaders.state == 0) {
-
 						src.x = 0;
 						src.y = 0;
-
 					} else {
-
 						src.x = 30;
 						src.y = 0;
 					}
 
 				//green
-				} else if (i > 0 && i < 3) {
-
+				}
+				else if (i > 0 && i < 3) {
 					if (invaders.state == 0) {
-
 						src.x = 0;
 						src.y = E_HEIGHT;
-
-					} else {
-
+					}
+					else {
 						src.x = 30;
 						src.y = E_HEIGHT;
 					}
 
 				//red
-				} else {
-
+				}
+				else {
 					if (invaders.state == 0) {
-
 						src.x = 0;
 						src.y = E_HEIGHT * 2;
-
-					} else {
-
+					}
+					else {
 						src.x = 30;
 						src.y = E_HEIGHT * 2;
 					}
 				}
-
 				dest.x = invaders.ennemy[i][j].hitbox.x;
 				dest.y = invaders.ennemy[i][j].hitbox.y;
 				dest.w = invaders.ennemy[i][j].hitbox.w;
@@ -454,23 +372,16 @@ void draw_invaders(struct invaders_t invaders, SDL_Surface *invadersmap, SDL_Sur
 }
 
 struct invaders_t set_invaders_speed(struct invaders_t invaders) {
-
 	switch (invaders.killed) {
-
 		case 10:
-
 			invaders.speed = 2;
 			invaders.state_speed = 800;
 			break;
-
 		case 20:
-
 			invaders.speed = 4;
 			invaders.state_speed = 600;
 			break;
-
 		case 30:
-
 			invaders.speed = 6;
 			invaders.state_speed = 400;
 			break;
@@ -479,106 +390,67 @@ struct invaders_t set_invaders_speed(struct invaders_t invaders) {
 }
 
 struct invaders_t move_invaders_down(struct invaders_t invaders) {
-
-	int i,j;
-
-	for (i = 0; i < 5; i++) {
-
-		for (j = 0; j < 10; j++) {
-
+	for (int i = 0; i < 5; i++) {
+		for (int j = 0; j < 10; j++) {
 			invaders.ennemy[i][j].hitbox.y += 15;
 		}
 	}
-
 	return invaders;
 }
 
 struct invaders_t move_invaders(int speed, struct invaders_t invaders) {
-
 	invaders = set_invaders_speed(invaders);
-
-	int i,j;
-
 	switch (invaders.direction) {
-
 		case left:
-
-			for (i = 0; i < 10; i++) {
-
-				for (j = 0; j < 5; j++) {
-
+			for (int i = 0; i < 10; i++) {
+				for (int j = 0; j < 5; j++) {
 					if (invaders.ennemy[j][i].alive == 1) {
-
 						if (invaders.ennemy[j][i].hitbox.x <= 0) {
-
 							invaders.direction = right;
 							invaders = move_invaders_down(invaders);
 							return invaders;
 						}
-
 						if (invaders.state_time + invaders.state_speed < SDL_GetTicks()) {
-
 							invaders.state_time = SDL_GetTicks();
-
 							if (invaders.state == 1) {
-
 								invaders.state = 0;
-
-							} else {
-
+							}
+							else {
 								invaders.state = 1;
 							}
 						}
-
-						//move invader speed number of pixels
 						invaders.ennemy[j][i].hitbox.x -= invaders.speed;
 					}
 				}
 			}
-
 			break;
-
 		case right:
-
-			for (i = 9; i >= 0; i--) {
-
-				for (j = 0; j < 5; j++) {
-
+			for (int i = 9; i >= 0; i--) {
+				for (int j = 0; j < 5; j++) {
 					if (invaders.ennemy[j][i].alive == 1) {
-
 						if (invaders.ennemy[j][i].hitbox.x + E_WIDTH >= WIDTH) {
-
 							invaders.direction = left;
 							invaders = move_invaders_down(invaders);
 							return invaders;
 						}
-
 						if (invaders.state_time + invaders.state_speed < SDL_GetTicks()) {
-
 							invaders.state_time = SDL_GetTicks();
-
 							if (invaders.state == 1) {
-
 								invaders.state = 0;
-
-							} else {
-
+							}
+							else {
 								invaders.state = 1;
 							}
 						}
-
 						invaders.ennemy[j][i].hitbox.x += invaders.speed;
 					}
 				}
 			}
-
 			break;
-
 		default:
 			break;
 
 	}
-
 	return invaders;
 }
 
@@ -655,13 +527,13 @@ void player_shoot(struct bullet_t *bullets, struct score_t score, struct player_
 	}
 }
 
-//Determine game level
-void calculate_level(struct invaders_t invaders, struct score_t score, enum state_t state, Uint32 pause_time, unsigned int pause_len) {
+struct score_t calculate_level(struct invaders_t invaders, struct score_t score, enum state_t state, Uint32 pause_time, unsigned int pause_len) {
 	if (invaders.killed != 0 && invaders.killed % 40 == 0) {
 		score.level++;
 		init_invaders(invaders);
 		state = pause_for(500, state, pause_time, pause_len);
 	}
+	return score;
 }
 
 //Determine when invaders should shoot
@@ -759,30 +631,29 @@ int main() {
 		return 1;
 	}
 	
-	/* Make sure SDL_Quit gets called when the program exits! */
 	atexit(SDL_Quit);
 	
-	/*set window title*/
-	SDL_WM_SetCaption("Space Invaders", "P");
+	SDL_WM_SetCaption("Space Invaders ETNA", "P");
 	
-	/* Attempt to set a 800x600 8 bit color video mode */
-	screen = SDL_SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT, 8, SDL_DOUBLEBUF );
+	screen = SDL_SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT, 32, SDL_HWSURFACE | SDL_DOUBLEBUF);
 	
 	if (screen == NULL) {
-		
 		printf("Unable to set video mode: %s\n", SDL_GetError());
 		return 1;
 	}
 
 	//load images
-	load_image("titlescreen.bmp", &title_screen, magenta);
-	load_image("cmap.bmp", &cmap, magenta);
-	load_image("invaders.bmp", &invadersmap, magenta);
-	load_image("player.bmp", &player_img, magenta);
-	load_image("gameover.bmp", &game_over_img, magenta);
-	load_image("damage.bmp", &damage_img, lime);
-	load_image("damagetop.bmp", &damage_top_img, lime);
+//	load_image("titlescreen.bmp", &title_screen, magenta);
+//	load_image("cmap.bmp", &cmap, magenta);
+//	load_image("invaders.bmp", &invadersmap, magenta);
+//	load_image("player.bmp", &player_img, magenta);
+//	load_image("gameover.bmp", &game_over_img, magenta);
 
+    title_screen = IMG_Load("title_screen.png");
+    cmap = IMG_Load("cmap.png");
+    invadersmap = IMG_Load("invaders.png");
+    player_img = IMG_Load("player_ship.png");
+    game_over_img = IMG_Load("gameover.png");
 	Uint32 next_game_tick = SDL_GetTicks();
 	int sleep = 0;
 	Uint8 *keystate = 0;
@@ -847,14 +718,6 @@ int main() {
 
 		if (state == menu) {
 			char s[] = "Press SPACEBAR to start";
-			SDL_Rect src[1];
-			int i;
-            src[0].x = 180;
-            src[0].y = 40;
-            src[0].w = 440;
-            src[0].h = 230;
-
-            SDL_FillRect(screen, &src[0], 248);
 
 			draw_title_screen(title_screen, screen);
 			draw_string(s, (SCREEN_WIDTH / 2) - (strlen(s) * 10), 500, cmap, screen);
@@ -874,12 +737,13 @@ int main() {
 			draw_bullets(bullets, P_BULLETS, screen);
 			draw_bullets(e_bullets, E_BULLETS, screen);
 			invaders = ennemy_hit_collision(invaders, bullets, score);
+			score = update_score(invaders, score);
 			player = player_hit_collision(e_bullets, player, state, pause_time, pause_len);
 			ennemy_player_collision(invaders, player, state, pause_time, pause_len);
 			invaders = move_invaders(invaders.speed, invaders);
 			move_bullets(bullets, P_BULLETS, -30);
 			move_bullets(e_bullets, E_BULLETS, 15);
-			calculate_level(invaders, score, state, pause_time, pause_len);
+			score = calculate_level(invaders, score, state, pause_time, pause_len);
 			ennemy_ai(invaders, player, e_bullets);
 			state = game_over_ai(player, state);
 			pause_game(pause_time, pause_len, state);
