@@ -722,9 +722,6 @@ int main() {
 			move_bullets(bullets, P_BULLETS, -30);
 			move_bullets(e_bullets, E_BULLETS, 15);
 			score = calculate_level(invaders, score, state, pause_time, pause_len);
-			if (invaders.killed != 0 && invaders.killed % 40 == 0) {
-			    state = pause_for(500, state, pause_time, pause_len);
-			}
 			ennemy_ai(invaders, player, e_bullets);
 			state = game_over_ai(player, state);
 			pause_game(pause_time, pause_len, state);
