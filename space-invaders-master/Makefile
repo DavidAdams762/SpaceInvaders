@@ -4,7 +4,7 @@ CXX=clang
 CXXFLAGS=-Wno-unknown-pragmas
 CPPFLAGS=-g
 LDFLAGS=
-LDLIBS=-lSDL_image -lSDL_gfx -lSDL_ttf
+LDLIBS=-lSDL_image -lSDL_gfx
 
 SRC=$(wildcard *.c)
 INCLUDE=$(wildcard *.h)

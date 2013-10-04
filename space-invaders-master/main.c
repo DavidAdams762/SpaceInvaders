@@ -2,7 +2,6 @@
 #include <stdio.h>
 #include <SDL/SDL.h>
 #include <SDL/SDL_image.h>
-#include <SDL/SDL_ttf.h>
 #include "space.h"
 
 int load_image(char filename[], SDL_Surface **surface, enum ck_t colour_key);
