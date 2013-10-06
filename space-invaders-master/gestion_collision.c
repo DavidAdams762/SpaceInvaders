@@ -59,7 +59,6 @@ struct player_t player_hit_collision(struct bullet_t *e_bullets, struct player_t
 				if (player.lives >= 0) {
 
 					player.lives--;
-					state = pause_for(500, state, pause_time, pause_len);
 				}
 			}
 		}
@@ -82,7 +81,6 @@ struct invaders_t ennemy_player_collision(struct invaders_t invaders, struct pla
 				if (c == 1) {
 
 					player.lives--;
-					state = pause_for(500, state, pause_time, pause_len);
 					invaders = init_invaders(invaders);
 					return invaders;
 				}

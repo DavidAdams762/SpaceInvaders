@@ -87,7 +87,6 @@ struct invaders_t move_invaders_down(struct invaders_t invaders);
 
 struct player_t move_player(enum direction_t direction, struct player_t player);
 
-enum state_t pause_for(unsigned int len, enum state_t state, Uint32 pause_time, unsigned int pause_len);
 void pause_game(Uint32 pause_time, unsigned int pause_len, enum state_t state);
 struct player_t player_hit_collision(struct bullet_t *e_bullets, struct player_t player, enum state_t state, Uint32 pause_time, unsigned int pause_len);
 void player_shoot(struct bullet_t *bullets, struct score_t score, struct player_t player);

@@ -4,14 +4,6 @@
 #include <SDL/SDL_image.h>
 #include "space.h"
 
-enum state_t pause_for(unsigned int len, enum state_t state, Uint32 pause_time, unsigned int pause_len) {
-	state = pause;
-	pause_time = SDL_GetTicks();
-	pause_len = len;
-	return state;
-}
-
-
 void pause_game(Uint32 pause_time, unsigned int pause_len, enum state_t state) {
 	if (SDL_GetTicks() > pause_time + pause_len) {
 		state = game;
@@ -150,6 +142,7 @@ int main() {
 			score = calculate_level(invaders, score, state, pause_time, pause_len);
 			if (score.passed > 0) {
                 invaders = init_invaders(invaders);
+                invaders.score = score.points;
                 score.passed = 0;
 			}
 			ennemy_ai(invaders, player, e_bullets);

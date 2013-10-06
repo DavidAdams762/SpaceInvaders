@@ -21,7 +21,6 @@ struct score_t calculate_level(struct invaders_t invaders, struct score_t score,
 	if (invaders.killed != 0 && invaders.killed % 40 == 0) {
 		score.level++;
 		score.passed = 1;
-		state = pause_for(500, state, pause_time, pause_len);
 	}
 	return score;
 }
