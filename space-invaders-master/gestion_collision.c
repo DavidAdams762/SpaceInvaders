@@ -20,28 +20,28 @@ int collision(SDL_Rect a, SDL_Rect b) {
 	return 1;
 }
 
-struct invaders_t ennemy_hit_collision(struct invaders_t invaders, struct bullet_t *bullets, struct score_t score) {
+struct ennemies_t ennemy_hit_collision(struct ennemies_t ennemies, struct bullet_t *bullets, struct score_t score) {
 	int c;
 	for (int i = 0; i < 5; i++) {
 		for (int j = 0; j < 10; j++) {
-			if (invaders.ennemy[i][j].alive == 1) {
+			if (ennemies.ennemy[i][j].alive == 1) {
 				for (int k = 0; k < P_BULLETS; k++) {
 					if (bullets[k].alive == 1) {
-						c = collision(bullets[k].hitbox, invaders.ennemy[i][j].hitbox);
+						c = collision(bullets[k].hitbox, ennemies.ennemy[i][j].hitbox);
 						if (c == 1) {
-							invaders.ennemy[i][j].alive = 0;
+							ennemies.ennemy[i][j].alive = 0;
 							bullets[k].alive = 0;
 							bullets[k].hitbox.x = 0;
 							bullets[k].hitbox.y = 0;
-							invaders.killed++;
-							invaders.score += invaders.ennemy[i][j].points;
+							ennemies.killed++;
+							ennemies.score += ennemies.ennemy[i][j].points;
 						}
 					}
 				}
 			}
 		}
 	}
-	return invaders;
+	return ennemies;
 }
 
 struct player_t player_hit_collision(struct bullet_t *e_bullets, struct player_t player, enum state_t state, Uint32 pause_time, unsigned int pause_len) {
@@ -66,7 +66,7 @@ struct player_t player_hit_collision(struct bullet_t *e_bullets, struct player_t
 	return player;
 }
 
-struct invaders_t ennemy_player_collision(struct invaders_t invaders, struct player_t player, enum state_t state, Uint32 pause_time, unsigned int pause_len) {
+struct ennemies_t ennemy_player_collision(struct ennemies_t ennemies, struct player_t player, enum state_t state, Uint32 pause_time, unsigned int pause_len) {
 
 	int i,j,c;
 
@@ -74,19 +74,19 @@ struct invaders_t ennemy_player_collision(struct invaders_t invaders, struct pla
 
 		for(j = 0; j < 10; j++) {
 
-			if (invaders.ennemy[i][j].alive == 1) {
+			if (ennemies.ennemy[i][j].alive == 1) {
 
-				c = collision(player.hitbox, invaders.ennemy[i][j].hitbox);
+				c = collision(player.hitbox, ennemies.ennemy[i][j].hitbox);
 
 				if (c == 1) {
 
 					player.lives--;
-					invaders = init_invaders(invaders);
-					return invaders;
+					ennemies = reset_ennemies(ennemies);
+					return ennemies;
 				}
 			}
 		}
 	}
 
-	return invaders;
+	return ennemies;
 }

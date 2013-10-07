@@ -4,51 +4,51 @@
 #include <SDL/SDL_image.h>
 #include "space.h"
 
-struct invaders_t init_invaders(struct invaders_t invaders) {
-	invaders.direction = right;
-	invaders.speed = 1;
-	invaders.state = 0;
-	invaders.killed = 0;
-	invaders.score = 0;
-	invaders.state_speed = 1000;
-	invaders.state_time = SDL_GetTicks();
+struct ennemies_t reset_ennemies(struct ennemies_t ennemies) {
+	ennemies.direction = right;
+	ennemies.speed = 1;
+	ennemies.state = 0;
+	ennemies.killed = 0;
+	ennemies.score = 0;
+	ennemies.state_speed = 1000;
+	ennemies.state_time = SDL_GetTicks();
 
 	int x = 0;
 	int y = 30;
 
 	for (int i = 0; i < 5; i++) {
 		for (int j = 0; j < 8; j++) {
-			invaders.ennemy[i][j].alive = 1;
-			invaders.ennemy[i][j].hitbox.x = x;
-			invaders.ennemy[i][j].hitbox.y = y;
-			invaders.ennemy[i][j].hitbox.w = E_WIDTH;
-			invaders.ennemy[i][j].hitbox.h = E_HEIGHT;
+			ennemies.ennemy[i][j].alive = 1;
+			ennemies.ennemy[i][j].hitbox.x = x;
+			ennemies.ennemy[i][j].hitbox.y = y;
+			ennemies.ennemy[i][j].hitbox.w = E_WIDTH;
+			ennemies.ennemy[i][j].hitbox.h = E_HEIGHT;
 
 			x += E_WIDTH + 20; // gap size
 
 			if (i == 0) {
-				invaders.ennemy[i][j].colour = purple;
-				invaders.ennemy[i][j].points = 30;
+				ennemies.ennemy[i][j].colour = purple;
+				ennemies.ennemy[i][j].points = 30;
 
 			}
 			else if (i >= 1 && i < 3) {
-				invaders.ennemy[i][j].colour = green;
-				invaders.ennemy[i][j].points = 20;
+				ennemies.ennemy[i][j].colour = green;
+				ennemies.ennemy[i][j].points = 20;
 
 			}
 			else {
-				invaders.ennemy[i][j].colour = red;
-				invaders.ennemy[i][j].points = 10;
+				ennemies.ennemy[i][j].colour = red;
+				ennemies.ennemy[i][j].points = 10;
 			}
 		}
 
 		x = 0;
 		y += E_HEIGHT + 20;
 	}
-	return invaders;
+	return ennemies;
 }
 
-void draw_invaders(struct invaders_t invaders, SDL_Surface *invadersmap, SDL_Surface *screen) {
+void display_ennemies(struct ennemies_t ennemies, SDL_Surface *ennemies_img, SDL_Surface *screen) {
 	SDL_Rect src, dest;
 
 	src.w = E_WIDTH;
@@ -56,10 +56,10 @@ void draw_invaders(struct invaders_t invaders, SDL_Surface *invadersmap, SDL_Sur
 
 	for (int i = 0; i < 5; i++) {
 		for (int j = 0; j < 8; j++) {
-			if (invaders.ennemy[i][j].alive == 1) {
+			if (ennemies.ennemy[i][j].alive == 1) {
 				//purple
 				if(i == 0) {
-					if (invaders.state == 0) {
+					if (ennemies.state == 0) {
 						src.x = 0;
 						src.y = 0;
 					} else {
@@ -70,7 +70,7 @@ void draw_invaders(struct invaders_t invaders, SDL_Surface *invadersmap, SDL_Sur
 				//green
 				}
 				else if (i > 0 && i < 3) {
-					if (invaders.state == 0) {
+					if (ennemies.state == 0) {
 						src.x = 0;
 						src.y = E_HEIGHT;
 					}
@@ -82,7 +82,7 @@ void draw_invaders(struct invaders_t invaders, SDL_Surface *invadersmap, SDL_Sur
 				//red
 				}
 				else {
-					if (invaders.state == 0) {
+					if (ennemies.state == 0) {
 						src.x = 0;
 						src.y = E_HEIGHT * 2;
 					}
@@ -91,66 +91,66 @@ void draw_invaders(struct invaders_t invaders, SDL_Surface *invadersmap, SDL_Sur
 						src.y = E_HEIGHT * 2;
 					}
 				}
-				dest.x = invaders.ennemy[i][j].hitbox.x;
-				dest.y = invaders.ennemy[i][j].hitbox.y;
-				dest.w = invaders.ennemy[i][j].hitbox.w;
-				dest.h = invaders.ennemy[i][j].hitbox.h;
+				dest.x = ennemies.ennemy[i][j].hitbox.x;
+				dest.y = ennemies.ennemy[i][j].hitbox.y;
+				dest.w = ennemies.ennemy[i][j].hitbox.w;
+				dest.h = ennemies.ennemy[i][j].hitbox.h;
 
-				SDL_BlitSurface(invadersmap, &src, screen, &dest);
+				SDL_BlitSurface(ennemies_img, &src, screen, &dest);
 			}
 		}
 	}
 }
 
-struct invaders_t set_invaders_speed(struct invaders_t invaders) {
-	switch (invaders.killed) {
+struct ennemies_t set_ennemies_speed(struct ennemies_t ennemies) {
+	switch (ennemies.killed) {
 		case 10:
-			invaders.speed = 2;
-			invaders.state_speed = 800;
+			ennemies.speed = 2;
+			ennemies.state_speed = 800;
 			break;
 		case 20:
-			invaders.speed = 4;
-			invaders.state_speed = 600;
+			ennemies.speed = 4;
+			ennemies.state_speed = 600;
 			break;
 		case 30:
-			invaders.speed = 6;
-			invaders.state_speed = 400;
+			ennemies.speed = 6;
+			ennemies.state_speed = 400;
 			break;
 	}
-	return invaders;
+	return ennemies;
 }
 
-struct invaders_t move_invaders_down(struct invaders_t invaders) {
+struct ennemies_t move_ennemies_down(struct ennemies_t ennemies) {
 	for (int i = 0; i < 5; i++) {
 		for (int j = 0; j < 10; j++) {
-			invaders.ennemy[i][j].hitbox.y += 15;
+			ennemies.ennemy[i][j].hitbox.y += 15;
 		}
 	}
-	return invaders;
+	return ennemies;
 }
 
-struct invaders_t move_invaders(int speed, struct invaders_t invaders) {
-	invaders = set_invaders_speed(invaders);
-	switch (invaders.direction) {
+struct ennemies_t move_ennemies(int speed, struct ennemies_t ennemies) {
+	ennemies = set_ennemies_speed(ennemies);
+	switch (ennemies.direction) {
 		case left:
 			for (int i = 0; i < 10; i++) {
 				for (int j = 0; j < 5; j++) {
-					if (invaders.ennemy[j][i].alive == 1) {
-						if (invaders.ennemy[j][i].hitbox.x <= 0) {
-							invaders.direction = right;
-							invaders = move_invaders_down(invaders);
-							return invaders;
+					if (ennemies.ennemy[j][i].alive == 1) {
+						if (ennemies.ennemy[j][i].hitbox.x <= 0) {
+							ennemies.direction = right;
+							ennemies = move_ennemies_down(ennemies);
+							return ennemies;
 						}
-						if (invaders.state_time + invaders.state_speed < SDL_GetTicks()) {
-							invaders.state_time = SDL_GetTicks();
-							if (invaders.state == 1) {
-								invaders.state = 0;
+						if (ennemies.state_time + ennemies.state_speed < SDL_GetTicks()) {
+							ennemies.state_time = SDL_GetTicks();
+							if (ennemies.state == 1) {
+								ennemies.state = 0;
 							}
 							else {
-								invaders.state = 1;
+								ennemies.state = 1;
 							}
 						}
-						invaders.ennemy[j][i].hitbox.x -= invaders.speed;
+						ennemies.ennemy[j][i].hitbox.x -= ennemies.speed;
 					}
 				}
 			}
@@ -158,22 +158,22 @@ struct invaders_t move_invaders(int speed, struct invaders_t invaders) {
 		case right:
 			for (int i = 9; i >= 0; i--) {
 				for (int j = 0; j < 5; j++) {
-					if (invaders.ennemy[j][i].alive == 1) {
-						if (invaders.ennemy[j][i].hitbox.x + E_WIDTH >= WIDTH) {
-							invaders.direction = left;
-							invaders = move_invaders_down(invaders);
-							return invaders;
+					if (ennemies.ennemy[j][i].alive == 1) {
+						if (ennemies.ennemy[j][i].hitbox.x + E_WIDTH >= WIDTH) {
+							ennemies.direction = left;
+							ennemies = move_ennemies_down(ennemies);
+							return ennemies;
 						}
-						if (invaders.state_time + invaders.state_speed < SDL_GetTicks()) {
-							invaders.state_time = SDL_GetTicks();
-							if (invaders.state == 1) {
-								invaders.state = 0;
+						if (ennemies.state_time + ennemies.state_speed < SDL_GetTicks()) {
+							ennemies.state_time = SDL_GetTicks();
+							if (ennemies.state == 1) {
+								ennemies.state = 0;
 							}
 							else {
-								invaders.state = 1;
+								ennemies.state = 1;
 							}
 						}
-						invaders.ennemy[j][i].hitbox.x += invaders.speed;
+						ennemies.ennemy[j][i].hitbox.x += ennemies.speed;
 					}
 				}
 			}
@@ -182,17 +182,17 @@ struct invaders_t move_invaders(int speed, struct invaders_t invaders) {
 			break;
 
 	}
-	return invaders;
+	return ennemies;
 }
 
-void ennemy_ai(struct invaders_t invaders, struct player_t player, struct bullet_t *e_bullets) {
+void ennemy_ai(struct ennemies_t ennemies, struct player_t player, struct bullet_t *e_bullets) {
 	int i, j, k;
 	for (i = 0; i < 10; i++) {
 		for (j = 4; j >= 0; j--) {
-			if (invaders.ennemy[j][i].alive == 1) {
+			if (ennemies.ennemy[j][i].alive == 1) {
 				int mid_point = player.hitbox.x + (player.hitbox.w / 2);
-				int start = invaders.ennemy[j][i].hitbox.x;
-				int end = invaders.ennemy[j][i].hitbox.x + invaders.ennemy[j][i].hitbox.w;
+				int start = ennemies.ennemy[j][i].hitbox.x;
+				int end = ennemies.ennemy[j][i].hitbox.x + ennemies.ennemy[j][i].hitbox.w;
 
 				if (mid_point > start && mid_point < end) {
 					for (k = 0; k < E_BULLETS; k++) {
@@ -200,7 +200,7 @@ void ennemy_ai(struct invaders_t invaders, struct player_t player, struct bullet
 							int r = rand() % 30;
 							if (r == 1) {
 								e_bullets[k].hitbox.x = start + (E_WIDTH / 2) ;
-								e_bullets[k].hitbox.y = invaders.ennemy[j][i].hitbox.y;
+								e_bullets[k].hitbox.y = ennemies.ennemy[j][i].hitbox.y;
 								e_bullets[k].alive = 1;
 							}
 							break;

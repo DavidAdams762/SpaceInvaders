@@ -4,7 +4,7 @@
 #include <SDL/SDL_image.h>
 #include "space.h"
 
-struct player_t init_player(struct player_t player) {
+struct player_t reset_player(struct player_t player) {
 	player.hitbox.x = (WIDTH / 2) - (P_WIDTH / 2);
 	player.hitbox.y = HEIGHT - (P_HEIGHT + 10);
 	player.hitbox.w = P_WIDTH;
@@ -14,7 +14,7 @@ struct player_t init_player(struct player_t player) {
 	return player;
 }
 
-void draw_player(SDL_Surface *player_img, SDL_Surface *screen, struct player_t player) {
+void display_player(SDL_Surface *player_img, SDL_Surface *screen, struct player_t player) {
 
 	SDL_Rect src;
 

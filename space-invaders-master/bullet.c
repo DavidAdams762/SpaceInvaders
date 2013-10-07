@@ -4,7 +4,7 @@
 #include <SDL/SDL_image.h>
 #include "space.h"
 
-void init_bullets(struct bullet_t b[], int max) {
+void reset_bullets(struct bullet_t b[], int max) {
 	for (int i = 0; i < max; i++) {
 		b[i].alive = 0;
 		b[i].hitbox.x = 0;
@@ -14,7 +14,7 @@ void init_bullets(struct bullet_t b[], int max) {
 	}
 }
 
-void draw_bullets(struct bullet_t b[], int max, SDL_Surface *screen) {
+void display_bullets(struct bullet_t b[], int max, SDL_Surface *screen) {
 	for (int i = 0; i < max; i++) {
 		if (b[i].alive == 1) {
 			SDL_FillRect(screen, &b[i].hitbox, SDL_MapRGB(screen->format, 255, 255, 255));

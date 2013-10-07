@@ -33,7 +33,7 @@ struct ennemy_t {
 	unsigned int points;
 };
 
-struct invaders_t {
+struct ennemies_t {
 	struct ennemy_t ennemy[5][10];
 	enum direction_t direction;
 	unsigned int killed;
@@ -55,35 +55,35 @@ struct bullet_t {
 };
 
 
-struct score_t calculate_level(struct invaders_t invaders, struct score_t score, enum state_t state, Uint32 pause_time, unsigned int pause_len);
+struct score_t calculate_level(struct ennemies_t ennemies, struct score_t score, enum state_t state, Uint32 pause_time, unsigned int pause_len);
 int collision(SDL_Rect a, SDL_Rect b);
 
-void draw_background (SDL_Surface *screen);
-void draw_bullets(struct bullet_t b[], int max, SDL_Surface *screen);
-int draw_char(char c, int x, int y, SDL_Surface *cmap, SDL_Surface *screen);
-void draw_game_over(SDL_Surface *game_over_img, SDL_Surface *screen);
-void draw_hud(SDL_Surface *screen, struct score_t score, struct player_t player, SDL_Surface *cmap);
-void draw_invaders(struct invaders_t invaders, SDL_Surface *invadersmap, SDL_Surface *screen);
-void draw_player(SDL_Surface *player_img, SDL_Surface *screen, struct player_t player);
-void draw_title_screen(SDL_Surface *title_screen, SDL_Surface *screen);
-void draw_string(char s[], int x, int y, SDL_Surface *cmap, SDL_Surface *screen);
+void display_background (SDL_Surface *screen);
+void display_bullets(struct bullet_t b[], int max, SDL_Surface *screen);
+int display_char(char c, int x, int y, SDL_Surface *cmap, SDL_Surface *screen);
+void display_game_over(SDL_Surface *game_over_img, SDL_Surface *screen);
+void display_hud(SDL_Surface *screen, struct score_t score, struct player_t player, SDL_Surface *cmap);
+void display_ennemies(struct ennemies_t ennemies, SDL_Surface *ennemies_img, SDL_Surface *screen);
+void display_player(SDL_Surface *player_img, SDL_Surface *screen, struct player_t player);
+void display_title_screen(SDL_Surface *title_screen, SDL_Surface *screen);
+void display_string(char s[], int x, int y, SDL_Surface *cmap, SDL_Surface *screen);
 
-void ennemy_ai(struct invaders_t invaders, struct player_t player, struct bullet_t *e_bullets);
-struct invaders_t ennemy_hit_collision(struct invaders_t invaders, struct bullet_t *bullets, struct score_t score);
-struct invaders_t ennemy_player_collision(struct invaders_t invaders, struct player_t player, enum state_t state, Uint32 pause_time, unsigned int pause_len);
+void ennemy_ai(struct ennemies_t ennemies, struct player_t player, struct bullet_t *e_bullets);
+struct ennemies_t ennemy_hit_collision(struct ennemies_t ennemies, struct bullet_t *bullets, struct score_t score);
+struct ennemies_t ennemy_player_collision(struct ennemies_t ennemies, struct player_t player, enum state_t state, Uint32 pause_time, unsigned int pause_len);
 
 enum state_t game_over_ai(struct player_t player, enum state_t state);
 
-void init_bullets(struct bullet_t b[], int max);
-struct invaders_t init_invaders(struct invaders_t invaders);
-struct player_t init_player(struct player_t player);
-struct score_t init_score(struct score_t score);
+void reset_bullets(struct bullet_t b[], int max);
+struct ennemies_t reset_ennemies(struct ennemies_t ennemies);
+struct player_t reset_player(struct player_t player);
+struct score_t reset_score(struct score_t score);
 
 int load_image(char filename[], SDL_Surface **surface, enum ck_t colour_key);
 
 int move_bullets(struct bullet_t b[], int max, int speed);
-struct invaders_t move_invaders(int speed, struct invaders_t invaders);
-struct invaders_t move_invaders_down(struct invaders_t invaders);
+struct ennemies_t move_ennemies(int speed, struct ennemies_t ennemies);
+struct ennemies_t move_ennemies_down(struct ennemies_t ennemies);
 
 struct player_t move_player(enum direction_t direction, struct player_t player);
 
@@ -91,9 +91,9 @@ void pause_game(Uint32 pause_time, unsigned int pause_len, enum state_t state);
 struct player_t player_hit_collision(struct bullet_t *e_bullets, struct player_t player, enum state_t state, Uint32 pause_time, unsigned int pause_len);
 void player_shoot(struct bullet_t *bullets, struct score_t score, struct player_t player);
 
-struct invaders_t set_invaders_speed(struct invaders_t invaders);
+struct ennemies_t set_ennemies_speed(struct ennemies_t ennemies);
 
-struct score_t update_score(struct invaders_t invaders, struct score_t score);
+struct score_t update_score(struct ennemies_t ennemies, struct score_t score);
 
 
 #endif
