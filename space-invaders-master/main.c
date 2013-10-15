@@ -33,13 +33,13 @@ int main() {
 		printf("Unable to initialize SDL: %s\n", SDL_GetError());
 		return 1;
 	}
-	
+
 	atexit(SDL_Quit);
-	
+
 	SDL_WM_SetCaption("Space ennemies ETNA", "P");
-	
+
 	screen = SDL_SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT, 32, SDL_HWSURFACE | SDL_DOUBLEBUF);
-	
+
 	if (screen == NULL) {
 		printf("Unable to set video mode: %s\n", SDL_GetError());
 		return 1;
@@ -63,7 +63,7 @@ int main() {
 	reset_bullets(e_bullets, E_BULLETS);
 	state = menu;
 	title_time = SDL_GetTicks();
-		
+
 	while (quit == 0) {
 		keystate = SDL_GetKeyState(NULL);
 		while (SDL_PollEvent(&event)) {
@@ -125,7 +125,7 @@ int main() {
 			ennemy_ai(ennemies, player, e_bullets);
 			state = game_over_ai(player, state);
 			pause_game(pause_time, pause_len, state);
-		
+
 		} else if (state == game_over) {
 			display_hud(screen, score, player, cmap);
             display_player(player_img, screen, player);
