@@ -19,39 +19,44 @@ enum direction_t {left, right, stationary};
 enum state_t {menu, options, game, game_over, pause};
 enum ck_t {magenta, lime};
 
-struct score_t {
-	unsigned int shots;
-	unsigned int points;
-	unsigned int level;
-	int passed;
+struct score_t
+{
+  unsigned int shots;
+  unsigned int points;
+  unsigned int level;
+  int passed;
 };
 
-struct ennemy_t {
-	SDL_Rect hitbox;
-	enum colour_t colour;
-	unsigned int alive;
-	unsigned int points;
+struct ennemy_t
+{
+  SDL_Rect hitbox;
+  enum colour_t colour;
+  unsigned int alive;
+  unsigned int points;
 };
 
-struct ennemies_t {
-	struct ennemy_t ennemy[5][10];
-	enum direction_t direction;
-	unsigned int killed;
-	int speed;
-	int state;
-	int state_speed;
-	int score;
-	Uint32 state_time;
+struct ennemies_t
+{
+  struct ennemy_t ennemy[5][10];
+  enum direction_t direction;
+  unsigned int killed;
+  int speed;
+  int state;
+  int state_speed;
+  int score;
+  Uint32 state_time;
 };
 
-struct player_t {
-	SDL_Rect hitbox;
-	int lives;
+struct player_t
+{
+  SDL_Rect hitbox;
+  int lives;
 };
 
-struct bullet_t {
-	SDL_Rect hitbox;
-	unsigned int alive;
+struct bullet_t
+{
+  SDL_Rect hitbox;
+  unsigned int alive;
 };
 
 
@@ -94,6 +99,5 @@ void player_shoot(struct bullet_t *bullets, struct score_t score, struct player_
 struct ennemies_t set_ennemies_speed(struct ennemies_t ennemies);
 
 struct score_t update_score(struct ennemies_t ennemies, struct score_t score);
-
 
 #endif
