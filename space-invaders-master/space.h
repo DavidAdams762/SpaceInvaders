@@ -72,6 +72,7 @@ void display_ennemies(struct ennemies_t ennemies, SDL_Surface *ennemies_img, SDL
 void display_player(SDL_Surface *player_img, SDL_Surface *screen, struct player_t player);
 void display_title_screen(SDL_Surface *title_screen, SDL_Surface *screen);
 void display_string(char s[], int x, int y, SDL_Surface *cmap, SDL_Surface *screen);
+char *display_scores(struct score_t score, SDL_Surface *screen, SDL_Surface *cmap);
 
 void ennemy_ai(struct ennemies_t ennemies, struct player_t player, struct bullet_t *e_bullets);
 struct ennemies_t ennemy_hit_collision(struct ennemies_t ennemies, struct bullet_t *bullets, struct score_t score);

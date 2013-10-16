@@ -32,6 +32,11 @@ int main()
   Uint32 pause_time;
   enum state_t state;
   Uint32 title_time;
+  int i;
+  char *result;
+  result = malloc(sizeof(char) * 255);
+  i = 0;
+
   if (SDL_Init(SDL_INIT_VIDEO) != 0)
     {
       printf("Unable to initialize SDL: %s\n", SDL_GetError());
@@ -77,31 +82,52 @@ int main()
 	  if (event.type == SDL_KEYDOWN)
 	    {
 	      if (event.key.keysym.sym == SDLK_ESCAPE)
-		quit = 1;
+		    quit = 1;
 	      else if ( event.key.keysym.sym == SDLK_SPACE)
-		{
-		  if (state == menu)
-		    state = game;
-		  else if (state == game)
-		    player_shoot(bullets, score, player);
-		  else if (state == game_over)
-		    {
-		      ennemies = reset_ennemies(ennemies);
-		      score = reset_score(score);
-		      player = reset_player(player);
-		      state = game;
-		    }
-		}
-	      break;
+            {
+              if (state == menu)
+                state = game;
+              else if (state == game)
+                player_shoot(bullets, score, player);
+              else if (state == game_over)
+                {
+                  ennemies = reset_ennemies(ennemies);
+                  score = reset_score(score);
+                  player = reset_player(player);
+                  state = game;
+                }
+            }
+            else if ( event.key.keysym.sym == SDLK_s)
+            {
+                if (((state != game) && (state != pause)) || state == game_over)
+                    state = options;
+            }
+            else if ( event.key.keysym.sym == SDLK_p)
+            {
+                if (state == game)
+                    state = pause;
+                 else if (state == pause)
+                     state = game;
+            }
+
 	    }
+	     break;
 	}
       display_background(screen);
       if (state == menu)
 	{
-	  char s[] = "Press SPACEBAR to start";
+	  char space[] = "Press SPACEBAR to start";
 	  display_title_screen(title_screen, screen);
-	  display_string(s, (SCREEN_WIDTH / 4), 400, cmap, screen);
+	  display_string(space, (SCREEN_WIDTH / 4), 400, cmap, screen);
+	  char s[] = "Press key s to see best scores";
+      display_string(s, (SCREEN_WIDTH / 4), 430, cmap, screen);
 	}
+	else if (state == options) {
+        if (i == 0)
+            result = display_scores(score, screen, cmap);
+        i++;
+        display_string(result, (SCREEN_WIDTH / 4), 0, cmap, screen);
+    }
       else if (state == game)
 	{
 	  if (keystate[SDLK_LEFT])
@@ -133,15 +159,21 @@ int main()
 	}
       else if (state == game_over)
 	{
+	  i = 0;
 	  display_hud(screen, score, player, cmap);
 	  display_player(player_img, screen, player);
 	  display_ennemies(ennemies, ennemies_img, screen);
 	  display_bullets(bullets, P_BULLETS, screen);
 	  display_bullets(e_bullets, E_BULLETS, screen);
 	  display_game_over(game_over_img, screen);
+	  if (i == 0)
+          result = display_scores(score, screen, cmap);
+      i++;
+      display_string(result, (SCREEN_WIDTH / 4), 400, cmap, screen);
 	}
       else if (state == pause)
 	{
+	  display_string("PAUSE", (SCREEN_WIDTH) / 2, (SCREEN_HEIGHT) / 2, cmap, screen);
 	  display_hud(screen, score, player, cmap);
 	  display_player(player_img, screen, player);
 	  display_ennemies(ennemies, ennemies_img, screen);
