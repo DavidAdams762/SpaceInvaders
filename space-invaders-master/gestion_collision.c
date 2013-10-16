@@ -87,6 +87,5 @@ struct ennemies_t ennemy_player_collision(struct ennemies_t ennemies, struct pla
 			}
 		}
 	}
-
 	return ennemies;
 }

@@ -29,17 +29,22 @@ int main() {
     Uint32 pause_time;
     enum state_t state;
     Uint32 title_time;
+    int i;
+    char *result;
+    result = malloc(sizeof(char) * 255);
+    i = 0;
+
 	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
 		printf("Unable to initialize SDL: %s\n", SDL_GetError());
 		return 1;
 	}
-	
+
 	atexit(SDL_Quit);
-	
+
 	SDL_WM_SetCaption("Space ennemies ETNA", "P");
-	
+
 	screen = SDL_SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT, 32, SDL_HWSURFACE | SDL_DOUBLEBUF);
-	
+
 	if (screen == NULL) {
 		printf("Unable to set video mode: %s\n", SDL_GetError());
 		return 1;
@@ -63,7 +68,7 @@ int main() {
 	reset_bullets(e_bullets, E_BULLETS);
 	state = menu;
 	title_time = SDL_GetTicks();
-		
+
 	while (quit == 0) {
 		keystate = SDL_GetKeyState(NULL);
 		while (SDL_PollEvent(&event)) {
@@ -85,6 +90,19 @@ int main() {
 								state = game;
 							}
 						break;
+						case SDLK_s:
+						    if (((state != game) && (state != pause)) || state == game_over)
+						        state = options;
+						break;
+						case SDLK_p:
+
+						    if (state == game) {
+						        state = pause;
+						    }
+                            else if (state == pause)    {
+                                state = game;
+                            }
+						break;
 						default:
 						break;
 					}
@@ -93,10 +111,17 @@ int main() {
 		}
 		display_background(screen);
 		if (state == menu) {
-			char s[] = "Press SPACEBAR to start";
+			char space[] = "Press SPACEBAR to start";
 			display_title_screen(title_screen, screen);
-			display_string(s, (SCREEN_WIDTH / 4), 400, cmap, screen);
+			display_string(space, (SCREEN_WIDTH / 4), 400, cmap, screen);
+			char s[] = "Press key s to see best scores";
+			display_string(s, (SCREEN_WIDTH / 4), 430, cmap, screen);
 
+		} else if (state == options) {
+		    if (i == 0)
+		        result = display_scores(score, screen, cmap);
+		        i++;
+		    display_string(result, (SCREEN_WIDTH / 4), 0, cmap, screen);
 		} else if (state == game) {
 			if (keystate[SDLK_LEFT]) {
 				player = move_player(left, player);
@@ -125,15 +150,21 @@ int main() {
 			ennemy_ai(ennemies, player, e_bullets);
 			state = game_over_ai(player, state);
 			pause_game(pause_time, pause_len, state);
-		
+
 		} else if (state == game_over) {
+		    i = 0;
 			display_hud(screen, score, player, cmap);
             display_player(player_img, screen, player);
             display_ennemies(ennemies, ennemies_img, screen);
             display_bullets(bullets, P_BULLETS, screen);
             display_bullets(e_bullets, E_BULLETS, screen);
 			display_game_over(game_over_img, screen);
+			if (i == 0)
+                result = display_scores(score, screen, cmap);
+                i++;
+            display_string(result, (SCREEN_WIDTH / 4), 400, cmap, screen);
 		} else if (state == pause) {
+		    display_string("PAUSE", (SCREEN_WIDTH) / 2, (SCREEN_HEIGHT) / 2, cmap, screen);
 			display_hud(screen, score, player, cmap);
             display_player(player_img, screen, player);
             display_ennemies(ennemies, ennemies_img, screen);
