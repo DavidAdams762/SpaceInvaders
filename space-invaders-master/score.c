@@ -19,7 +19,7 @@ struct score_t update_score(struct ennemies_t ennemies, struct score_t score)
   return score;
 }
 
-struct score_t calculate_level(struct ennemies_t ennemies, struct score_t score, enum state_t state, Uint32 pause_time, unsigned int pause_len)
+struct score_t calculate_level(struct ennemies_t ennemies, struct score_t score, enum state_t state, Uint32 pause_time, int pause_len)
 {
   if (ennemies.killed != 0 && ennemies.killed % 40 == 0)
     {

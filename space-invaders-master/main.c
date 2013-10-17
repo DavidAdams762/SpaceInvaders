@@ -4,7 +4,7 @@
 #include <SDL/SDL_image.h>
 #include "space.h"
 
-void pause_game(Uint32 pause_time, unsigned int pause_len, enum state_t state)
+void pause_game(Uint32 pause_time, int pause_len, enum state_t state)
 {
   if (SDL_GetTicks() > pause_time + pause_len)
     {
@@ -25,7 +25,7 @@ int main()
   struct player_t player;
   struct bullets_t bullets[PLAYER_B];
   struct bullets_t ennemy_bullets[ENNEMY_B];
-  unsigned int pause_len;
+  int pause_len;
   Uint32 pause_time;
   enum state_t state;
   Uint32 title_time;
@@ -131,7 +131,7 @@ int main()
 	    player = move_player(left, player);
 	  if (keystate[SDLK_RIGHT])
 	    player = move_player(right, player);
-	  display_hud(screen, score, player, font_img);
+	  display_status(screen, score, player, font_img);
 	  display_player(player_img, screen, player);
 	  display_ennemies(ennemies, ennemies_img, screen);
 	  display_bullets(bullets, PLAYER_B, screen);
@@ -150,14 +150,14 @@ int main()
 	      ennemies.score = score.points;
 	      score.passed = 0;
 	    }
-	  ennemy_ai(ennemies, player, ennemy_bullets);
+	  ennemy_moving(ennemies, player, ennemy_bullets);
 	  state = game_over_ai(player, state);
 	  pause_game(pause_time, pause_len, state);
 	}
       else if (state == game_over)
 	{
 	  i = 0;
-	  display_hud(screen, score, player, font_img);
+	  display_status(screen, score, player, font_img);
 	  display_player(player_img, screen, player);
 	  display_ennemies(ennemies, ennemies_img, screen);
 	  display_bullets(bullets, PLAYER_B, screen);
@@ -171,7 +171,7 @@ int main()
       else if (state == pause)
 	{
 	  display_string("PAUSE", (WIDTH) / 2, (HEIGHT) / 2, font_img, screen);
-	  display_hud(screen, score, player, font_img);
+	  display_status(screen, score, player, font_img);
 	  display_player(player_img, screen, player);
 	  display_ennemies(ennemies, ennemies_img, screen);
 	  display_bullets(bullets, PLAYER_B, screen);

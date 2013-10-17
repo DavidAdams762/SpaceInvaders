@@ -52,7 +52,7 @@ struct ennemies_t ennemy_hit_collision(struct ennemies_t ennemies, struct bullet
   return ennemies;
 }
 
-struct player_t player_hit_collision(struct bullets_t *ennemy_bullets, struct player_t player, enum state_t state, Uint32 pause_time, unsigned int pause_len)
+struct player_t player_hit_collision(struct bullets_t *ennemy_bullets, struct player_t player, enum state_t state, Uint32 pause_time, int pause_len)
 {
   int i,c;
 
@@ -73,7 +73,7 @@ struct player_t player_hit_collision(struct bullets_t *ennemy_bullets, struct pl
   return player;
 }
 
-struct ennemies_t ennemy_player_collision(struct ennemies_t ennemies, struct player_t player, enum state_t state, Uint32 pause_time, unsigned int pause_len)
+struct ennemies_t ennemy_player_collision(struct ennemies_t ennemies, struct player_t player, enum state_t state, Uint32 pause_time, int pause_len)
 {
   int i,j,c;
 

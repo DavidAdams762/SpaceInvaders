@@ -30,15 +30,12 @@ struct ennemies_t reset_ennemies(struct ennemies_t ennemies)
 	x += ENNEMY_W + 20; // gap size
 
 	if (i == 0) {
-	  ennemies.ennemy[i][j].color = purple;
 	  ennemies.ennemy[i][j].points = 30;
 	}
 	else if (i >= 1 && i < 3) {
-	  ennemies.ennemy[i][j].color = green;
 	  ennemies.ennemy[i][j].points = 20;
 	}
 	else {
-	  ennemies.ennemy[i][j].color = red;
 	  ennemies.ennemy[i][j].points = 10;
 	}
       }
@@ -199,7 +196,7 @@ struct ennemies_t move_ennemies(int speed, struct ennemies_t ennemies) {
   return ennemies;
 }
 
-void ennemy_ai(struct ennemies_t ennemies, struct player_t player, struct bullets_t *ennemy_bullets) {
+void ennemy_moving(struct ennemies_t ennemies, struct player_t player, struct bullets_t *ennemy_bullets) {
   int i, j, k;
   for (i = 0; i < 10; i++)
     {

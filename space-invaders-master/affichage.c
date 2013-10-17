@@ -55,7 +55,7 @@ void display_string(char s[], int x, int y, SDL_Surface *font_img, SDL_Surface *
     }
 }
 
-void display_hud(SDL_Surface *screen, struct score_t score, struct player_t player, SDL_Surface *font_img)
+void display_status(SDL_Surface *screen, struct score_t score, struct player_t player, SDL_Surface *font_img)
 {
   SDL_Rect r;
   r.x = 0;
