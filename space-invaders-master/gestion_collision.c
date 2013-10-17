@@ -30,7 +30,7 @@ struct ennemies_t ennemy_hit_collision(struct ennemies_t ennemies, struct bullet
 	{
 	  if (ennemies.ennemy[i][j].alive == 1)
 	    {
-	      for (int k = 0; k < P_BULLETS; k++)
+	      for (int k = 0; k < PLAYER_B; k++)
 		{
 		  if (bullets[k].alive == 1)
 		    {
@@ -56,7 +56,7 @@ struct player_t player_hit_collision(struct bullet_t *e_bullets, struct player_t
 {
   int i,c;
 
-  for(i = 0; i < E_BULLETS; i++)
+  for(i = 0; i < ENNEMY_B; i++)
     {
       if (e_bullets[i].alive == 1)
 	{

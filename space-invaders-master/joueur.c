@@ -6,10 +6,10 @@
 
 struct player_t reset_player(struct player_t player)
 {
-  player.hitbox.x = (WIDTH / 2) - (P_WIDTH / 2);
-  player.hitbox.y = HEIGHT - (P_HEIGHT + 10);
-  player.hitbox.w = P_WIDTH;
-  player.hitbox.h = P_HEIGHT;
+  player.hitbox.x = (WIDTH / 2) - (PLAYER_W / 2);
+  player.hitbox.y = HEIGHT - (PLAYER_H + 10);
+  player.hitbox.w = PLAYER_W;
+  player.hitbox.h = PLAYER_H;
   player.lives = 3;
 
   return player;
@@ -21,8 +21,8 @@ void display_player(SDL_Surface *player_img, SDL_Surface *screen, struct player_
 
   src.x = 0;
   src.y = 0;
-  src.w = P_WIDTH;
-  src.h = P_HEIGHT;
+  src.w = PLAYER_W;
+  src.h = PLAYER_H;
 
   SDL_BlitSurface(player_img, &src, screen, &player.hitbox);
 }

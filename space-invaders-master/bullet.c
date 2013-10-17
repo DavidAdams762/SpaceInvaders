@@ -11,8 +11,8 @@ void reset_bullets(struct bullet_t b[], int max)
       b[i].alive = 0;
       b[i].hitbox.x = 0;
       b[i].hitbox.y = 0;
-      b[i].hitbox.w = B_WIDTH;
-      b[i].hitbox.h = B_HEIGHT;
+      b[i].hitbox.w = BULLET_W;
+      b[i].hitbox.h = BULLET_H;
     }
 }
 
@@ -49,12 +49,12 @@ int move_bullets(struct bullet_t b[], int max, int speed)
 void player_shoot(struct bullet_t *bullets, struct score_t score, struct player_t player)
 {
   int i;
-  for (i = 0; i < P_BULLETS; i++)
+  for (i = 0; i < PLAYER_B; i++)
     {
       if (bullets[i].alive == 0)
 	{
 	  score.shots++;
-	  bullets[i].hitbox.x = player.hitbox.x + (P_WIDTH / 2);
+	  bullets[i].hitbox.x = player.hitbox.x + (PLAYER_W / 2);
 	  bullets[i].hitbox.y = player.hitbox.y - (bullets[i].hitbox.h + 10);
 	  bullets[i].alive = 1;
 	  break;

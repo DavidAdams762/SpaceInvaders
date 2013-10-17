@@ -16,7 +16,7 @@ int main()
 {
   SDL_Surface *screen;
   SDL_Surface *title_screen;
-  SDL_Surface *cmap;
+  SDL_Surface *font_img;
   SDL_Surface *ennemies_img;
   SDL_Surface *player_img;
   SDL_Surface *saucer_img;
@@ -26,8 +26,8 @@ int main()
   struct score_t score;
   struct ennemies_t ennemies;
   struct player_t player;
-  struct bullet_t bullets[P_BULLETS];
-  struct bullet_t e_bullets[E_BULLETS];
+  struct bullet_t bullets[PLAYER_B];
+  struct bullet_t e_bullets[ENNEMY_B];
   unsigned int pause_len;
   Uint32 pause_time;
   enum state_t state;
@@ -47,7 +47,7 @@ int main()
 
   SDL_WM_SetCaption("Space ennemies ETNA", "P");
 
-  screen = SDL_SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT, 32, SDL_HWSURFACE | SDL_DOUBLEBUF);
+  screen = SDL_SetVideoMode(SCREEN_W, SCREEN_H, 32, SDL_HWSURFACE | SDL_DOUBLEBUF);
 
   if (screen == NULL)
     {
@@ -56,7 +56,7 @@ int main()
     }
 
   title_screen = IMG_Load("images/title_screen.png");
-  cmap = IMG_Load("images/cmap.png");
+  font_img = IMG_Load("images/font.png");
   ennemies_img = IMG_Load("images/ennemies.png");
   player_img = IMG_Load("images/player_ship.png");
   game_over_img = IMG_Load("images/gameover.png");
@@ -69,8 +69,8 @@ int main()
   score = reset_score(score);
   ennemies = reset_ennemies(ennemies);
   player = reset_player(player);
-  reset_bullets(bullets, P_BULLETS);
-  reset_bullets(e_bullets, E_BULLETS);
+  reset_bullets(bullets, PLAYER_B);
+  reset_bullets(e_bullets, ENNEMY_B);
   state = menu;
   title_time = SDL_GetTicks();
 
@@ -118,15 +118,15 @@ int main()
 	{
 	  char space[] = "Press SPACEBAR to start";
 	  display_title_screen(title_screen, screen);
-	  display_string(space, (SCREEN_WIDTH / 4), 400, cmap, screen);
+	  display_string(space, (SCREEN_W / 4), 400, font_img, screen);
 	  char s[] = "Press key s to see best scores";
-      display_string(s, (SCREEN_WIDTH / 4), 430, cmap, screen);
+      display_string(s, (SCREEN_W / 4), 430, font_img, screen);
 	}
 	else if (state == options) {
         if (i == 0)
-            result = display_scores(score, screen, cmap);
+            result = display_scores(score, screen, font_img);
         i++;
-        display_string(result, (SCREEN_WIDTH / 4), 0, cmap, screen);
+        display_string(result, (SCREEN_W / 4), 0, font_img, screen);
     }
       else if (state == game)
 	{
@@ -134,18 +134,18 @@ int main()
 	    player = move_player(left, player);
 	  if (keystate[SDLK_RIGHT])
 	    player = move_player(right, player);
-	  display_hud(screen, score, player, cmap);
+	  display_hud(screen, score, player, font_img);
 	  display_player(player_img, screen, player);
 	  display_ennemies(ennemies, ennemies_img, screen);
-	  display_bullets(bullets, P_BULLETS, screen);
-	  display_bullets(e_bullets, E_BULLETS, screen);
+	  display_bullets(bullets, PLAYER_B, screen);
+	  display_bullets(e_bullets, ENNEMY_B, screen);
 	  ennemies = ennemy_hit_collision(ennemies, bullets, score);
 	  score = update_score(ennemies, score);
 	  player = player_hit_collision(e_bullets, player, state, pause_time, pause_len);
 	  ennemy_player_collision(ennemies, player, state, pause_time, pause_len);
 	  ennemies = move_ennemies(ennemies.speed, ennemies);
-	  move_bullets(bullets, P_BULLETS, -30);
-	  move_bullets(e_bullets, E_BULLETS, 15);
+	  move_bullets(bullets, PLAYER_B, -30);
+	  move_bullets(e_bullets, ENNEMY_B, 15);
 	  score = calculate_level(ennemies, score, state, pause_time, pause_len);
 	  if (score.passed > 0)
 	    {
@@ -160,25 +160,25 @@ int main()
       else if (state == game_over)
 	{
 	  i = 0;
-	  display_hud(screen, score, player, cmap);
+	  display_hud(screen, score, player, font_img);
 	  display_player(player_img, screen, player);
 	  display_ennemies(ennemies, ennemies_img, screen);
-	  display_bullets(bullets, P_BULLETS, screen);
-	  display_bullets(e_bullets, E_BULLETS, screen);
+	  display_bullets(bullets, PLAYER_B, screen);
+	  display_bullets(e_bullets, ENNEMY_B, screen);
 	  display_game_over(game_over_img, screen);
 	  if (i == 0)
-          result = display_scores(score, screen, cmap);
+          result = display_scores(score, screen, font_img);
       i++;
-      display_string(result, (SCREEN_WIDTH / 4), 400, cmap, screen);
+      display_string(result, (SCREEN_W / 4), 400, font_img, screen);
 	}
       else if (state == pause)
 	{
-	  display_string("PAUSE", (SCREEN_WIDTH) / 2, (SCREEN_HEIGHT) / 2, cmap, screen);
-	  display_hud(screen, score, player, cmap);
+	  display_string("PAUSE", (SCREEN_W) / 2, (SCREEN_H) / 2, font_img, screen);
+	  display_hud(screen, score, player, font_img);
 	  display_player(player_img, screen, player);
 	  display_ennemies(ennemies, ennemies_img, screen);
-	  display_bullets(bullets, P_BULLETS, screen);
-	  display_bullets(e_bullets, E_BULLETS, screen);
+	  display_bullets(bullets, PLAYER_B, screen);
+	  display_bullets(e_bullets, ENNEMY_B, screen);
 	  pause_game(pause_time, pause_len, state);
 	}
 

@@ -14,7 +14,7 @@ void display_background (SDL_Surface *screen)
   SDL_FillRect(screen, &src, SDL_MapRGB(screen->format, 0, 0, 0));
 }
 
-int display_char(char c, int x, int y, SDL_Surface *cmap, SDL_Surface *screen)
+int display_char(char c, int x, int y, SDL_Surface *font_img, SDL_Surface *screen)
 {
   SDL_Rect src;
   SDL_Rect dest;
@@ -34,7 +34,7 @@ int display_char(char c, int x, int y, SDL_Surface *cmap, SDL_Surface *screen)
 	{
 	  if (c == map[i][j])
 	    {
-	      SDL_BlitSurface(cmap, &src, screen, &dest);
+	      SDL_BlitSurface(font_img, &src, screen, &dest);
 	      return 0;
 	    }
 	  src.x += 17;
@@ -45,17 +45,17 @@ int display_char(char c, int x, int y, SDL_Surface *cmap, SDL_Surface *screen)
   return 0;
 }
 
-void display_string(char s[], int x, int y, SDL_Surface *cmap, SDL_Surface *screen)
+void display_string(char s[], int x, int y, SDL_Surface *font_img, SDL_Surface *screen)
 {
   int i;
   for (i = 0; i < strlen(s); i++)
     {
-      display_char(s[i], x, y, cmap, screen);
+      display_char(s[i], x, y, font_img, screen);
       x += 17;
     }
 }
 
-void display_hud(SDL_Surface *screen, struct score_t score, struct player_t player, SDL_Surface *cmap)
+void display_hud(SDL_Surface *screen, struct score_t score, struct player_t player, SDL_Surface *font_img)
 {
   SDL_Rect r;
   r.x = 0;
@@ -65,25 +65,25 @@ void display_hud(SDL_Surface *screen, struct score_t score, struct player_t play
   SDL_FillRect(screen, &r, SDL_MapRGB(screen->format, 41, 41, 41));
 
   char score_label[] = "Score";
-  display_string(score_label, 50, 0, cmap, screen);
+  display_string(score_label, 50, 0, font_img, screen);
 
   char score_num[10];
   snprintf(score_num, 10, "%d", score.points);
-  display_string(score_num, 150, 0, cmap, screen);
+  display_string(score_num, 150, 0, font_img, screen);
 
   char level[] = "Level";
-  display_string(level, 300, 0, cmap, screen);
+  display_string(level, 300, 0, font_img, screen);
 
   char level_num[2];
   snprintf(level_num, 2, "%d", score.level);
-  display_string(level_num, 400, 0, cmap, screen);
+  display_string(level_num, 400, 0, font_img, screen);
 
   char lives[] = "Lives";
-  display_string(lives, 550, 0, cmap, screen);
+  display_string(lives, 550, 0, font_img, screen);
 
   char lives_num[2];
   snprintf(lives_num, 2, "%d", player.lives);
-  display_string(lives_num, 650, 0, cmap, screen);
+  display_string(lives_num, 650, 0, font_img, screen);
 }
 
 void display_title_screen(SDL_Surface *title_screen, SDL_Surface *screen)
@@ -96,7 +96,7 @@ void display_title_screen(SDL_Surface *title_screen, SDL_Surface *screen)
   src.w = title_screen->w;
   src.h = title_screen->h;
 
-  dest.x = (SCREEN_WIDTH / 2) - (title_screen->w / 2);
+  dest.x = (SCREEN_W / 2) - (title_screen->w / 2);
   dest.y = (HEIGHT / 3) - (title_screen->h / 2);
   dest.w = title_screen->w;
   dest.h = title_screen->h;
@@ -122,7 +122,7 @@ void display_game_over(SDL_Surface *game_over_img, SDL_Surface *screen)
 	SDL_BlitSurface(game_over_img, &src, screen, &dest);
 }
 
-char *display_scores(struct score_t score, SDL_Surface *screen, SDL_Surface *cmap) {
+char *display_scores(struct score_t score, SDL_Surface *screen, SDL_Surface *font_img) {
 
      FILE *f;
      int c;

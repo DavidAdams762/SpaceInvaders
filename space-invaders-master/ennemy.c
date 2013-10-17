@@ -24,10 +24,10 @@ struct ennemies_t reset_ennemies(struct ennemies_t ennemies)
 	ennemies.ennemy[i][j].alive = 1;
 	ennemies.ennemy[i][j].hitbox.x = x;
 	ennemies.ennemy[i][j].hitbox.y = y;
-	ennemies.ennemy[i][j].hitbox.w = E_WIDTH;
-	ennemies.ennemy[i][j].hitbox.h = E_HEIGHT;
+	ennemies.ennemy[i][j].hitbox.w = ENNEMY_W;
+	ennemies.ennemy[i][j].hitbox.h = ENNEMY_H;
 
-	x += E_WIDTH + 20; // gap size
+	x += ENNEMY_W + 20; // gap size
 
 	if (i == 0) {
 	  ennemies.ennemy[i][j].colour = purple;
@@ -43,7 +43,7 @@ struct ennemies_t reset_ennemies(struct ennemies_t ennemies)
 	}
       }
     x = 0;
-    y += E_HEIGHT + 20;
+    y += ENNEMY_H + 20;
     }
   return ennemies;
 }
@@ -52,8 +52,8 @@ void display_ennemies(struct ennemies_t ennemies, SDL_Surface *ennemies_img, SDL
 {
   SDL_Rect src, dest;
 
-  src.w = E_WIDTH;
-  src.h = E_HEIGHT;
+  src.w = ENNEMY_W;
+  src.h = ENNEMY_H;
 
   for (int i = 0; i < 5; i++)
     {
@@ -79,12 +79,12 @@ void display_ennemies(struct ennemies_t ennemies, SDL_Surface *ennemies_img, SDL
 		  if (ennemies.state == 0)
 		    {
 		      src.x = 0;
-		      src.y = E_HEIGHT;
+		      src.y = ENNEMY_H;
 		    }
 		  else
 		    {
 		      src.x = 30;
-		      src.y = E_HEIGHT;
+		      src.y = ENNEMY_H;
 		    }
 		}
 	      else
@@ -92,12 +92,12 @@ void display_ennemies(struct ennemies_t ennemies, SDL_Surface *ennemies_img, SDL
 		  if (ennemies.state == 0)
 		    {
 		      src.x = 0;
-		      src.y = E_HEIGHT * 2;
+		      src.y = ENNEMY_H * 2;
 		    }
 		  else
 		    {
 		      src.x = 30;
-		      src.y = E_HEIGHT * 2;
+		      src.y = ENNEMY_H * 2;
 		    }
 		}
 	      dest.x = ennemies.ennemy[i][j].hitbox.x;
@@ -177,7 +177,7 @@ struct ennemies_t move_ennemies(int speed, struct ennemies_t ennemies) {
 	    {
 	      if (ennemies.ennemy[j][i].alive == 1)
 		{
-		  if (ennemies.ennemy[j][i].hitbox.x + E_WIDTH >= WIDTH)
+		  if (ennemies.ennemy[j][i].hitbox.x + ENNEMY_W >= WIDTH)
 		    {
 		      ennemies.direction = left;
 		      ennemies = move_ennemies_down(ennemies);
@@ -213,14 +213,14 @@ void ennemy_ai(struct ennemies_t ennemies, struct player_t player, struct bullet
 
 	      if (mid_point > start && mid_point < end)
 		{
-		  for (k = 0; k < E_BULLETS; k++)
+		  for (k = 0; k < ENNEMY_B; k++)
 		    {
 		      if (e_bullets[k].alive == 0)
 			{
 			  int r = rand() % 30;
 			  if (r == 1)
 			    {
-			      e_bullets[k].hitbox.x = start + (E_WIDTH / 2);
+			      e_bullets[k].hitbox.x = start + (ENNEMY_W / 2);
 			      e_bullets[k].hitbox.y = ennemies.ennemy[j][i].hitbox.y;
 			      e_bullets[k].alive = 1;
 			    }
