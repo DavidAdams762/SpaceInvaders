@@ -143,7 +143,7 @@ int main()
 	  ennemies = move_ennemies(ennemies.speed, ennemies);
 	  move_bullets(bullets, PLAYER_B, -30);
 	  move_bullets(ennemy_bullets, ENNEMY_B, 15);
-	  score = calculate_level(ennemies, score, state, pause_time, pause_len);
+	  score = check_level(ennemies, score, state, pause_time, pause_len);
 	  if (score.passed > 0)
 	    {
 	      ennemies = reset_ennemies(ennemies);
@@ -151,7 +151,7 @@ int main()
 	      score.passed = 0;
 	    }
 	  ennemy_moving(ennemies, player, ennemy_bullets);
-	  state = game_over_ai(player, state);
+	  state = state_game_over(player, state);
 	  pause_game(pause_time, pause_len, state);
 	}
       else if (state == game_over)

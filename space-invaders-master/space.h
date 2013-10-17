@@ -55,7 +55,7 @@ struct bullets_t
 };
 
 
-struct score_t calculate_level(struct ennemies_t ennemies, struct score_t score, enum state_t state, Uint32 pause_time, int pause_len);
+struct score_t check_level(struct ennemies_t ennemies, struct score_t score, enum state_t state, Uint32 pause_time, int pause_len);
 int collision(SDL_Rect a, SDL_Rect b);
 
 void display_background (SDL_Surface *screen);
@@ -75,8 +75,6 @@ struct ennemies_t ennemy_player_collision(struct ennemies_t ennemies, struct pla
 
 int file_exists(const char * filename);
 
-enum state_t game_over_ai(struct player_t player, enum state_t state);
-
 void reset_bullets(struct bullets_t b[], int max);
 struct ennemies_t reset_ennemies(struct ennemies_t ennemies);
 struct player_t reset_player(struct player_t player);
@@ -93,6 +91,7 @@ struct player_t player_hit_collision(struct bullets_t *ennemy_bullets, struct pl
 void player_shoot(struct bullets_t *bullets, struct score_t score, struct player_t player);
 
 struct ennemies_t set_ennemies_speed(struct ennemies_t ennemies);
+enum state_t state_game_over(struct player_t player, enum state_t state);
 
 struct score_t update_score(struct ennemies_t ennemies, struct score_t score);
 
