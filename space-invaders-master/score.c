@@ -1,3 +1,12 @@
+/*
+** score.c for  in /Users/Ophelie/Sites/SpaceInvaders/space-invaders-master
+** 
+** Made by Ophelie Volga
+** Login   <volga_o@etna-alternance.net>
+** 
+** Started on  Thu Oct 17 21:49:27 2013 Ophelie Volga
+** Last update Thu Oct 17 21:49:28 2013 Ophelie Volga
+*/
 #include <stdlib.h>
 #include <stdio.h>
 #include <SDL/SDL.h>

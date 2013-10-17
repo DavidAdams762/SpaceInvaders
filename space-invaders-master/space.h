@@ -1,3 +1,12 @@
+/*
+** space.h for  in /Users/Ophelie/Sites/SpaceInvaders/space-invaders-master
+** 
+** Made by Ophelie Volga
+** Login   <volga_o@etna-alternance.net>
+** 
+** Started on  Thu Oct 17 21:49:37 2013 Ophelie Volga
+** Last update Thu Oct 17 21:50:05 2013 Ophelie Volga
+*/
 #ifndef _SPACE_H
 #define _SPACE_H
 
