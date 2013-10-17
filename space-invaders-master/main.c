@@ -122,7 +122,7 @@ int main()
             result = display_scores(score, screen, font_img);
         i++;
 
-        display_string(result, (WIDTH / 4), 0, font_img, screen);
+        display_string(result, (WIDTH / 5), 0, font_img, screen);
         char space[] = "Press SPACEBAR to start";
         display_string(space, (WIDTH / 4), 400, font_img, screen);
     }
@@ -167,7 +167,7 @@ int main()
 	  if (i == 0)
           result = display_scores(score, screen, font_img);
       i++;
-      display_string(result, (WIDTH / 4), 400, font_img, screen);
+      display_string(result, (WIDTH / 5), 400, font_img, screen);
 	}
       else if (state == pause)
 	{
@@ -188,6 +188,5 @@ int main()
       if(sleep >= 0)
 	SDL_Delay(sleep);
     }
-
   return 0;
 }

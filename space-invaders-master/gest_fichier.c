@@ -79,7 +79,10 @@ char *get_format_scores(char *file)
     int j;
     int c;
     char current[255];
+    char *text;
     int length;
+
+    text = malloc(255 * sizeof(char));
     result = malloc(255 * sizeof(char));
     i = 0;
     length = 0;
@@ -96,7 +99,13 @@ char *get_format_scores(char *file)
         }
         if (c == ';') {
             current[i] = '\0';
-            length += sprintf(result + length, "%d. %s\n", j, current);
+            if (j == 1)
+                text = "Fisrt";
+            else if (j == 2)
+                text = "Second";
+            else
+                text = "Third";
+            length += sprintf(result + length, "%s %s\n", text, current);
             j++;
              i=0;
          }

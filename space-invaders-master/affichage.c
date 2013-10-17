@@ -39,8 +39,8 @@ int display_char(char c, int x, int y, SDL_Surface *font_img, SDL_Surface *scree
 	    }
 	  src.x += 17;
 	}
-      src.y += 20;//move down one line on the image file
-      src.x = 0; //reset to start of line
+      src.y += 20;
+      src.x = 0;
     }
   return 0;
 }
