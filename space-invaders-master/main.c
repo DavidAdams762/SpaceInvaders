@@ -104,7 +104,7 @@ int main()
                 if (state == game)
                     state = pause;
                  else if (state == pause)
-                     state = game;
+                    state = game;
             }
 	    }
 	}
@@ -164,7 +164,7 @@ int main()
 	  display_bullets(bullets, PLAYER_B, screen);
 	  display_bullets(ennemy_bullets, ENNEMY_B, screen);
 	  display_game_over(game_over_img, screen);
-	  if (i == 0)   {
+	  if (i == 0)
           result = display_scores(score, screen, font_img);
       i++;
       display_string(result, (WIDTH / 4), 400, font_img, screen);
@@ -188,5 +188,6 @@ int main()
       if(sleep >= 0)
 	SDL_Delay(sleep);
     }
+
   return 0;
 }

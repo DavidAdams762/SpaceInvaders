@@ -95,4 +95,8 @@ enum state_t state_game_over(struct player_t player, enum state_t state);
 
 struct score_t update_score(struct ennemies_t ennemies, struct score_t score);
 
+void create_file_scores(char *file);
+char *get_scores(char *file, int score);
+void change_scores(char *file, char *tmp);
+char *get_format_scores(char *);
 #endif

@@ -122,85 +122,22 @@ void display_game_over(SDL_Surface *game_over_img, SDL_Surface *screen)
 	SDL_BlitSurface(game_over_img, &src, screen, &dest);
 }
 
-char *display_scores(struct score_t score, SDL_Surface *screen, SDL_Surface *font_img) {
-
-     FILE *f;
-     int c;
-     int i;
-     int j;
-     int pts;
-     char current[255];
-     char *result = malloc(255 * sizeof(char));
-     char tmp[255];
-     int length = 0;
-     i = 0;
-     j = 0;
-
-     if (file_exists("scores.txt") == 0) {
-         f = fopen("scores.txt", "w");
-         fseek(f, 0, SEEK_END);
-         long lfile=ftell(f);   //longueur du fichier
-         if(lfile==0)
-            fprintf (f, "0;0;0;\n");
-         fclose(f);
-     }
-            //dd
-     f = fopen("scores.txt", "r");
-     fseek(f, 0, SEEK_SET);
-      pts = score.points;
-      i = 0;
-     while((c = fgetc(f)) != EOF && c != '\n')  {
-        if (c != ';') {
-            current[i] = c;
-            i++;
-        }
-        if (c == ';') {
-            current[i] = '\0';
-            if (pts < atoi(current))   {
-                length += sprintf(tmp + length, "%s;", current);
-            } else {
-                length += sprintf(tmp + length, "%d;", pts);
-                pts = atoi(current);
-            }
-            i=0;
-         }
-     }
-     fclose(f);
-
-    f = fopen("scores.txt", "w");
-    fseek(f, 0, SEEK_END);
-    fprintf (f, "%s\n", tmp);
-    fclose(f);
-
-
-    f = fopen("scores.txt", "r");
-    fseek(f, 0, SEEK_SET);
-     i = 0;
-     j = 1;
-     length = 0;
-     while((c = fgetc(f)) != EOF && c != '\n')  {
-        if (c != ';') {
-            current[i] = c;
-            i++;
-        }
-        if (c == ';') {
-            current[i] = '\0';
-            length += sprintf(result + length, "%d. %s\n", j, current);
-            j++;
-             i=0;
-         }
-     }
-     fclose(f);
-     return result;
-}
-
-int file_exists(const char * filename)
+char *display_scores(struct score_t score, SDL_Surface *screen, SDL_Surface *font_img)
 {
-    FILE *file  = fopen(filename, "r");
-    if (file)
-    {
-        fclose(file);
-        return 1;
-    }
-    return 0;
+     FILE *f;
+     char *result = malloc(255 * sizeof(char));
+     char *tmp = malloc(255 * sizeof(char));
+     char *nfile;
+     nfile = "scores.txt";
+
+
+     if (file_exists(nfile) == 0)
+         create_file_scores(nfile);
+
+     tmp = get_scores(nfile, score.points);
+
+     change_scores(nfile, tmp);
+     result = get_format_scores(nfile);
+
+     return result;
 }
