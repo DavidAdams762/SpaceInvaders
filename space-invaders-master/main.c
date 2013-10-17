@@ -82,7 +82,7 @@ int main()
 		    quit = 1;
 	      else if ( event.key.keysym.sym == SDLK_SPACE)
             {
-              if (state == menu)
+              if (state == menu || state == options)
                 state = game;
               else if (state == game)
                 player_shoot(bullets, score, player);
@@ -106,9 +106,7 @@ int main()
                  else if (state == pause)
                      state = game;
             }
-
 	    }
-	     break;
 	}
       display_background(screen);
       if (state == menu)
@@ -123,10 +121,14 @@ int main()
         if (i == 0)
             result = display_scores(score, screen, font_img);
         i++;
+
         display_string(result, (WIDTH / 4), 0, font_img, screen);
+        char space[] = "Press SPACEBAR to start";
+        display_string(space, (WIDTH / 4), 400, font_img, screen);
     }
       else if (state == game)
 	{
+	  i = 0;
 	  if (keystate[SDLK_LEFT])
 	    player = move_player(left, player);
 	  if (keystate[SDLK_RIGHT])
@@ -156,14 +158,13 @@ int main()
 	}
       else if (state == game_over)
 	{
-	  i = 0;
 	  display_status(screen, score, player, font_img);
 	  display_player(player_img, screen, player);
 	  display_ennemies(ennemies, ennemies_img, screen);
 	  display_bullets(bullets, PLAYER_B, screen);
 	  display_bullets(ennemy_bullets, ENNEMY_B, screen);
 	  display_game_over(game_over_img, screen);
-	  if (i == 0)
+	  if (i == 0)   {
           result = display_scores(score, screen, font_img);
       i++;
       display_string(result, (WIDTH / 4), 400, font_img, screen);
