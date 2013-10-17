@@ -96,7 +96,7 @@ void display_title_screen(SDL_Surface *title_screen, SDL_Surface *screen)
   src.w = title_screen->w;
   src.h = title_screen->h;
 
-  dest.x = (SCREEN_W / 2) - (title_screen->w / 2);
+  dest.x = (WIDTH / 2) - (title_screen->w / 2);
   dest.y = (HEIGHT / 3) - (title_screen->h / 2);
   dest.w = title_screen->w;
   dest.h = title_screen->h;

@@ -4,7 +4,7 @@
 #include <SDL/SDL_image.h>
 #include "space.h"
 
-void reset_bullets(struct bullet_t b[], int max)
+void reset_bullets(struct bullets_t b[], int max)
 {
   for (int i = 0; i < max; i++)
     {
@@ -16,7 +16,7 @@ void reset_bullets(struct bullet_t b[], int max)
     }
 }
 
-void display_bullets(struct bullet_t b[], int max, SDL_Surface *screen)
+void display_bullets(struct bullets_t b[], int max, SDL_Surface *screen)
 {
   for (int i = 0; i < max; i++)
     {
@@ -27,7 +27,7 @@ void display_bullets(struct bullet_t b[], int max, SDL_Surface *screen)
     }
 }
 
-int move_bullets(struct bullet_t b[], int max, int speed)
+int move_bullets(struct bullets_t b[], int max, int speed)
 {
   for (int i = 0; i < max; i++)
     {
@@ -46,7 +46,7 @@ int move_bullets(struct bullet_t b[], int max, int speed)
   return 0;
 }
 
-void player_shoot(struct bullet_t *bullets, struct score_t score, struct player_t player)
+void player_shoot(struct bullets_t *bullets, struct score_t score, struct player_t player)
 {
   int i;
   for (i = 0; i < PLAYER_B; i++)

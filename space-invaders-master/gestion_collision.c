@@ -21,7 +21,7 @@ int collision(SDL_Rect a, SDL_Rect b)
   return 1;
 }
 
-struct ennemies_t ennemy_hit_collision(struct ennemies_t ennemies, struct bullet_t *bullets, struct score_t score)
+struct ennemies_t ennemy_hit_collision(struct ennemies_t ennemies, struct bullets_t *bullets, struct score_t score)
 {
   int c;
   for (int i = 0; i < 5; i++)
@@ -52,15 +52,15 @@ struct ennemies_t ennemy_hit_collision(struct ennemies_t ennemies, struct bullet
   return ennemies;
 }
 
-struct player_t player_hit_collision(struct bullet_t *e_bullets, struct player_t player, enum state_t state, Uint32 pause_time, unsigned int pause_len)
+struct player_t player_hit_collision(struct bullets_t *ennemy_bullets, struct player_t player, enum state_t state, Uint32 pause_time, unsigned int pause_len)
 {
   int i,c;
 
   for(i = 0; i < ENNEMY_B; i++)
     {
-      if (e_bullets[i].alive == 1)
+      if (ennemy_bullets[i].alive == 1)
 	{
-	  c = collision(e_bullets[i].hitbox, player.hitbox);
+	  c = collision(ennemy_bullets[i].hitbox, player.hitbox);
 	  if (c == 1)
 	    {
 	      if (player.lives >= 0)

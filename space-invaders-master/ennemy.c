@@ -30,15 +30,15 @@ struct ennemies_t reset_ennemies(struct ennemies_t ennemies)
 	x += ENNEMY_W + 20; // gap size
 
 	if (i == 0) {
-	  ennemies.ennemy[i][j].colour = purple;
+	  ennemies.ennemy[i][j].color = purple;
 	  ennemies.ennemy[i][j].points = 30;
 	}
 	else if (i >= 1 && i < 3) {
-	  ennemies.ennemy[i][j].colour = green;
+	  ennemies.ennemy[i][j].color = green;
 	  ennemies.ennemy[i][j].points = 20;
 	}
 	else {
-	  ennemies.ennemy[i][j].colour = red;
+	  ennemies.ennemy[i][j].color = red;
 	  ennemies.ennemy[i][j].points = 10;
 	}
       }
@@ -199,7 +199,7 @@ struct ennemies_t move_ennemies(int speed, struct ennemies_t ennemies) {
   return ennemies;
 }
 
-void ennemy_ai(struct ennemies_t ennemies, struct player_t player, struct bullet_t *e_bullets) {
+void ennemy_ai(struct ennemies_t ennemies, struct player_t player, struct bullets_t *ennemy_bullets) {
   int i, j, k;
   for (i = 0; i < 10; i++)
     {
@@ -215,14 +215,14 @@ void ennemy_ai(struct ennemies_t ennemies, struct player_t player, struct bullet
 		{
 		  for (k = 0; k < ENNEMY_B; k++)
 		    {
-		      if (e_bullets[k].alive == 0)
+		      if (ennemy_bullets[k].alive == 0)
 			{
 			  int r = rand() % 30;
 			  if (r == 1)
 			    {
-			      e_bullets[k].hitbox.x = start + (ENNEMY_W / 2);
-			      e_bullets[k].hitbox.y = ennemies.ennemy[j][i].hitbox.y;
-			      e_bullets[k].alive = 1;
+			      ennemy_bullets[k].hitbox.x = start + (ENNEMY_W / 2);
+			      ennemy_bullets[k].hitbox.y = ennemies.ennemy[j][i].hitbox.y;
+			      ennemy_bullets[k].alive = 1;
 			    }
 			  break;
 			}
